@@ -112,6 +112,7 @@ html {
     overflow-x: hidden;
     margin-top: 0;
     padding-top: 0;
+    background: var(--background-color); /* Match body background */
 }
 
 body {
@@ -126,6 +127,7 @@ body {
     overflow-x: hidden;
     padding-top: 0; /* Remove any body padding */
     margin-top: 0;
+    background: var(--background-color); /* Match container background */
 }
 
 /* Header - Fixed positioning with proper z-index */
@@ -286,23 +288,27 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--background-color);
+    background: var(--surface-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     margin: var(--spacing-md);
     height: calc(100vh - 120px); /* Account for header and margins */
+    position: relative; /* Ensure proper positioning */
+    border: 1px solid var(--border-color); /* Add border for visibility */
 }
 
-/* Container - Add top padding to account for fixed header */
+/* Container - Proper grid layout with full visibility */
 .container {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 400px; /* Increased right column width */
     grid-template-rows: 80px 1fr;
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    padding-top: 82px; /* Increased padding to account for header margin */
+    padding-top: 82px; /* Account for header margin */
+    gap: 0; /* Remove gaps between grid items */
+    overflow: hidden; /* Prevent container overflow */
 }
 
 /* Enhanced Welcome Section - Better Organization */
@@ -318,6 +324,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    position: relative; /* Ensure proper positioning */
 }
 
 .welcome-content {
@@ -880,22 +887,28 @@ body {
     flex-direction: column;
     min-height: 0;
     height: calc(100vh - 120px); /* Account for header and margins */
-    border: 1px solid var(--border-color); /* Add border for better visibility */
+    border: 2px solid var(--primary-color);
+    position: relative;
+    right: 0; /* Ensure right edge is visible */
+    width: calc(100% - var(--spacing-md) * 2); /* Account for margins */
 }
 
-/* Panel header - Ensure proper visibility and styling */
+/* Panel header - Ensure proper visibility and full width */
 .panel-header {
     background: var(--primary-color);
     color: white;
     padding: var(--spacing-lg);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* Round top corners */
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    min-height: 60px;
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .panel-header h3 {
@@ -910,13 +923,15 @@ body {
 
 .panel-header h3 i {
     font-size: var(--font-size-xl);
+    color: white;
 }
 
-/* Panel controls - Ensure proper button styling */
+/* Panel controls - Ensure proper button styling and positioning */
 .panel-controls {
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .panel-controls button {
@@ -933,6 +948,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0; /* Prevent button shrinking */
 }
 
 .panel-controls button:hover {
@@ -942,9 +958,10 @@ body {
 
 .panel-controls button i {
     font-size: var(--font-size-sm);
+    color: white;
 }
 
-/* Metrics container - Ensure proper scrolling and content visibility */
+/* Metrics container - Ensure proper scrolling and full visibility */
 .metrics-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -953,10 +970,13 @@ body {
     overflow-y: auto;
     flex: 1;
     min-height: 0;
-    background: var(--background-color); /* Add background for better contrast */
+    background: var(--background-color);
+    border-top: 1px solid var(--border-color);
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
-/* Ensure metric cards are visible */
+/* Ensure metric cards are visible and properly positioned */
 .metrics-container:empty::after {
     content: "Loading metrics...";
     display: block;
@@ -980,7 +1000,20 @@ body {
     z-index: 101;
 }
 
-/* Metric cards - Ensure proper content display */
+/* Add right edge indicator */
+.analytics-panel::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    z-index: 5;
+}
+
+/* Metric cards - Ensure proper content display and positioning */
 .metric-card {
     background: var(--surface-color);
     border: 1px solid var(--border-color);
@@ -989,11 +1022,13 @@ body {
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-normal);
     position: relative;
-    overflow: visible; /* Ensure content is not clipped */
-    min-height: 120px; /* Ensure minimum height for content */
+    overflow: visible;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .metric-card:hover {
@@ -1002,12 +1037,13 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Metric card header structure */
+/* Metric card header structure - Ensure proper alignment */
 .metric-header {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-md);
     height: 100%;
+    width: 100%; /* Ensure full width */
 }
 
 .metric-icon {
@@ -1020,7 +1056,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-lg);
-    flex-shrink: 0;
+    flex-shrink: 0; /* Prevent icon shrinking */
 }
 
 .metric-info {
@@ -1029,16 +1065,18 @@ body {
     flex-direction: column;
     justify-content: space-between;
     min-height: 0;
+    width: calc(100% - 48px - var(--spacing-md)); /* Account for icon and gap */
 }
 
-/* Metric card content - Ensure proper visibility */
+/* Metric card content - Ensure proper visibility and positioning */
 .metric-card .metric-value {
     font-size: var(--font-size-2xl);
     font-weight: 700;
     color: var(--text-color);
     margin: var(--spacing-sm) 0;
     line-height: 1.2;
-    display: block; /* Ensure proper display */
+    display: block;
+    word-break: break-word; /* Prevent text overflow */
 }
 
 .metric-card .metric-label {
@@ -1047,13 +1085,15 @@ body {
     opacity: 0.8;
     margin-bottom: var(--spacing-sm);
     font-weight: 500;
-    display: block; /* Ensure proper display */
+    display: block;
+    word-break: break-word; /* Prevent text overflow */
 }
 
 .metric-card .metric-trend {
     font-size: var(--font-size-sm);
     font-weight: 500;
-    display: block; /* Ensure proper display */
+    display: block;
+    word-break: break-word; /* Prevent text overflow */
 }
 
 .metric-trend.positive {
@@ -1064,9 +1104,10 @@ body {
     color: var(--error-color);
 }
 
-/* Sentiment chart styling */
+/* Sentiment chart styling - Ensure proper positioning */
 .sentiment-chart {
     margin-top: var(--spacing-sm);
+    width: 100%; /* Ensure full width */
 }
 
 .sentiment-bar {
@@ -1076,11 +1117,13 @@ body {
     overflow: hidden;
     margin-bottom: var(--spacing-xs);
     display: flex;
+    width: 100%; /* Ensure full width */
 }
 
 .sentiment-fill {
     height: 100%;
     transition: width var(--transition-normal);
+    min-width: 0; /* Allow shrinking */
 }
 
 .sentiment-fill.positive {
@@ -1100,12 +1143,14 @@ body {
     gap: var(--spacing-sm);
     flex-wrap: wrap;
     font-size: var(--font-size-xs);
+    width: 100%; /* Ensure full width */
 }
 
 .sentiment-item {
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
     font-weight: 500;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .sentiment-item.positive {
@@ -1123,9 +1168,10 @@ body {
     color: var(--error-color);
 }
 
-/* Intent chart styling */
+/* Intent chart styling - Ensure proper positioning */
 .intent-chart {
     margin-top: var(--spacing-sm);
+    width: 100%; /* Ensure full width */
 }
 
 .intent-item {
@@ -1134,6 +1180,7 @@ body {
     align-items: center;
     padding: var(--spacing-xs) 0;
     border-bottom: 1px solid var(--border-color);
+    width: 100%; /* Ensure full width */
 }
 
 .intent-item:last-child {
@@ -1144,6 +1191,8 @@ body {
     font-size: var(--font-size-sm);
     color: var(--text-color);
     font-weight: 500;
+    flex: 1; /* Take available space */
+    word-break: break-word; /* Prevent text overflow */
 }
 
 .intent-badge {
@@ -1155,6 +1204,7 @@ body {
     font-weight: 600;
     min-width: 24px;
     text-align: center;
+    flex-shrink: 0; /* Prevent badge shrinking */
 }
 
 .metric-card.primary {
