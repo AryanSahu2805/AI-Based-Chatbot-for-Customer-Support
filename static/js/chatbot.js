@@ -114,6 +114,14 @@ class EnhancedChatbotUI {
             });
         }
         
+        // Close analytics panel button
+        const closeAnalyticsBtn = document.getElementById('closeAnalyticsPanel');
+        if (closeAnalyticsBtn) {
+            closeAnalyticsBtn.addEventListener('click', () => {
+                this.closeAnalyticsPanel();
+            });
+        }
+        
         // Settings changes
         this.themeSelect.addEventListener('change', (e) => {
             this.changeTheme(e.target.value);
@@ -804,6 +812,30 @@ class EnhancedChatbotUI {
         
         document.body.appendChild(emojiPicker);
         
+        // Position the emoji picker relative to the emoji button
+        const emojiBtn = this.emojiBtn;
+        const btnRect = emojiBtn.getBoundingClientRect();
+        const picker = emojiPicker.querySelector('.emoji-picker');
+        
+        // Calculate position to keep picker within viewport
+        const pickerWidth = 400; // max-width from CSS
+        const pickerHeight = 300; // approximate height
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        let left = btnRect.left + (btnRect.width / 2) - (pickerWidth / 2);
+        let top = btnRect.bottom + 10; // 10px below button
+        
+        // Ensure picker doesn't go off-screen
+        if (left < 20) left = 20;
+        if (left + pickerWidth > viewportWidth - 20) left = viewportWidth - pickerWidth - 20;
+        if (top + pickerHeight > viewportHeight - 20) top = btnRect.top - pickerHeight - 10;
+        
+        picker.style.position = 'absolute';
+        picker.style.left = left + 'px';
+        picker.style.top = top + 'px';
+        picker.style.transform = 'none';
+        
         // Add event listeners
         emojiPicker.querySelector('.close-emoji-btn').addEventListener('click', () => {
             emojiPicker.remove();
@@ -825,6 +857,15 @@ class EnhancedChatbotUI {
                 emojiPicker.remove();
             }
         });
+        
+        // Close on Escape key
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                emojiPicker.remove();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
     }
     
     showFileUpload() {
@@ -924,14 +965,47 @@ class EnhancedChatbotUI {
         const expandBtn = this.expandAnalyticsBtn;
         
         if (analyticsPanel.classList.contains('expanded')) {
+            // Collapse back to normal
             analyticsPanel.classList.remove('expanded');
             expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
             expandBtn.setAttribute('aria-label', 'Expand analytics');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+            
+            // Show success notification
+            this.showNotification('Analytics panel minimized', 'info');
         } else {
+            // Expand to full screen
             analyticsPanel.classList.add('expanded');
             expandBtn.innerHTML = '<i class="fas fa-compress"></i>';
             expandBtn.setAttribute('aria-label', 'Collapse analytics');
+            
+            // Prevent body scroll when expanded
+            document.body.style.overflow = 'hidden';
+            
+            // Show success notification
+            this.showNotification('Analytics panel expanded to full screen', 'success');
+            
+            // Refresh analytics data for better full-screen experience
+            this.refreshAnalytics();
         }
+    }
+    
+    closeAnalyticsPanel() {
+        const analyticsPanel = document.getElementById('analyticsPanel');
+        const expandBtn = this.expandAnalyticsBtn;
+        
+        // Collapse back to normal
+        analyticsPanel.classList.remove('expanded');
+        expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        expandBtn.setAttribute('aria-label', 'Expand analytics');
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        
+        // Show success notification
+        this.showNotification('Analytics panel closed', 'info');
     }
     
     refreshAnalytics() {

@@ -813,12 +813,13 @@ body {
     animation: typing 1.4s infinite ease-in-out;
 }
 
-/* Smart Suggestions */
+/* Smart Suggestions - Better Colors */
 .smart-suggestions {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
     flex-wrap: wrap;
+    margin-top: var(--spacing-sm);
 }
 
 .suggestions-label {
@@ -835,7 +836,7 @@ body {
 }
 
 .suggestion-chip {
-    background: var(--fresh-peach);
+    background: var(--primary-color);
     color: white;
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
@@ -844,10 +845,13 @@ body {
     transition: all var(--transition-normal);
     border: none;
     font-weight: 500;
+    max-width: 200px;
+    text-align: center;
+    line-height: 1.4;
 }
 
 .suggestion-chip:hover {
-    background: var(--coral-accent);
+    background: var(--secondary-color);
     transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
 }
@@ -1323,6 +1327,9 @@ body {
     max-width: 400px;
     width: 90%;
     animation: modalSlideIn 0.3s ease-out;
+    position: absolute;
+    overflow: hidden;
+    max-height: 80vh;
 }
 
 .emoji-picker-header {
@@ -1331,6 +1338,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: var(--surface-color);
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
 .emoji-picker-header h4 {
@@ -1362,22 +1373,32 @@ body {
     grid-template-columns: repeat(8, 1fr);
     gap: var(--spacing-sm);
     padding: var(--spacing-lg);
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--surface-color);
 }
 
 .emoji {
-    font-size: 2rem;
+    font-size: 1.8rem;
     cursor: pointer;
     padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     transition: all var(--transition-normal);
     text-align: center;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
 }
 
 .emoji:hover {
     background: var(--background-color);
     transform: scale(1.1);
     box-shadow: var(--shadow-sm);
+    border-color: var(--primary-color);
 }
 
 /* File Preview Styles */
@@ -1464,27 +1485,83 @@ body {
     transform: translateY(-1px);
 }
 
-/* Analytics Panel Expanded State */
+/* Analytics Panel Expanded State - Properly Centered */
 .analytics-panel.expanded {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw;
-    height: 90vh;
-    max-width: 1200px;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: var(--z-modal);
-    box-shadow: var(--shadow-xl);
-    border-radius: var(--radius-2xl);
+    background: var(--surface-color);
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.analytics-panel.expanded .panel-header {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.analytics-panel.expanded .panel-header h3 {
+    color: white;
+}
+
+.analytics-panel.expanded .panel-header .panel-controls button {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.analytics-panel.expanded .panel-header .panel-controls button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.close-panel-btn {
+    background: rgba(239, 68, 68, 0.8);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: white;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    opacity: 0.8;
+}
+
+.close-panel-btn:hover {
+    background: rgba(239, 68, 68, 1);
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.analytics-panel.expanded .close-panel-btn {
+    display: inline-block !important;
+    background: rgba(239, 68, 68, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.5);
 }
 
 .analytics-panel.expanded .metrics-container {
+    flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
     overflow-y: auto;
-    max-height: calc(90vh - 100px);
+    background: var(--background-color);
+}
+
+.analytics-panel.expanded .metric-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
 }
 
 /* Enhanced Input Controls */
