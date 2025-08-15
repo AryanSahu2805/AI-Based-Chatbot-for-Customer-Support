@@ -209,80 +209,108 @@
             </div>
             
             <div class="metrics-container">
-                <!-- Core Metrics -->
-                <div class="metric-card primary">
-                    <div class="metric-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h4>Total Queries</h4>
-                        <p id="totalQueries">-</p>
-                        <span class="metric-trend positive">+12% today</span>
-                    </div>
-                </div>
-                
+                <!-- Average Response Time -->
                 <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h4>Avg Response Time</h4>
-                        <p id="avgResponseTime">-</p>
-                        <span class="metric-trend negative">-5% this week</span>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-tachometer-alt"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h4>Performance Gain</h4>
-                        <p id="performanceGain">-</p>
-                        <span class="metric-trend positive">Target: 40%</span>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h4>Uptime</h4>
-                        <p id="uptime">-</p>
-                        <span class="metric-trend positive">99.9%</span>
-                    </div>
-                </div>
-                
-                <!-- Sentiment Analysis -->
-                <div class="metric-card sentiment-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h4>Customer Sentiment</h4>
-                        <div class="sentiment-chart" id="sentimentChart">
-                            <div class="sentiment-bar positive" style="width: 65%"></div>
-                            <div class="sentiment-bar neutral" style="width: 25%"></div>
-                            <div class="sentiment-bar negative" style="width: 10%"></div>
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-clock"></i>
                         </div>
-                        <div class="sentiment-labels">
-                            <span>Positive: 65%</span>
-                            <span>Neutral: 25%</span>
-                            <span>Negative: 10%</span>
+                        <div class="metric-info">
+                            <div class="metric-label">Avg Response Time</div>
+                            <div class="metric-value" id="avgResponseTime">2ms</div>
+                            <div class="metric-trend negative" id="responseTimeTrend">-5% this week</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Intent Distribution -->
-                <div class="metric-card intent-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-brain"></i>
+
+                <!-- Performance Gain -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Performance Gain</div>
+                            <div class="metric-value" id="performanceGain">40.0%</div>
+                            <div class="metric-trend positive" id="performanceTrend">Target: 40%</div>
+                        </div>
                     </div>
-                    <div class="metric-content">
-                        <h4>Query Intent Distribution</h4>
-                        <div class="intent-chart" id="intentChart">
-                            <!-- Intent distribution will be populated here -->
+                </div>
+
+                <!-- Customer Sentiment -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Customer Sentiment</div>
+                            <div class="sentiment-chart">
+                                <div class="sentiment-bar">
+                                    <div class="sentiment-fill positive" style="width: 0%"></div>
+                                    <div class="sentiment-fill neutral" style="width: 100%"></div>
+                                    <div class="sentiment-fill negative" style="width: 0%"></div>
+                                </div>
+                                <div class="sentiment-breakdown">
+                                    <span class="sentiment-item positive">Positive: 0.0%</span>
+                                    <span class="sentiment-item neutral">Neutral: 100.0%</span>
+                                    <span class="sentiment-item negative">Negative: 0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Intent Distribution -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Query Intent Distribution</div>
+                            <div class="intent-chart">
+                                <div class="intent-item">
+                                    <span class="intent-name">Return Refund</span>
+                                    <span class="intent-badge">2</span>
+                                </div>
+                                <div class="intent-item">
+                                    <span class="intent-name">Technical Support</span>
+                                    <span class="intent-badge">1</span>
+                                </div>
+                                <div class="intent-item">
+                                    <span class="intent-name">General Inquiry</span>
+                                    <span class="intent-badge">1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Uptime -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value" id="uptime">99.9%</div>
+                            <div class="metric-trend positive" id="uptimeTrend">99.9%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Queries -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Total Queries</div>
+                            <div class="metric-value" id="totalQueries">4</div>
+                            <div class="metric-trend positive" id="queriesTrend">+12% today</div>
                         </div>
                     </div>
                 </div>

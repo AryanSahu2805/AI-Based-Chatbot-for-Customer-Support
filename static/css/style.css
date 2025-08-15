@@ -3,69 +3,74 @@
 
 :root {
     /* Light Theme Colors */
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #ffd700;
-    --text-color: #1e293b;
-    --background-color: #f8fafc;
-    --surface-color: #ffffff;
-    --border-color: #e2e8f0;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --accent-color: #06b6d4;
+    --success-color: #22c55e;
+    --warning-color: #fbbf24;
+    --error-color: #ef4444;
     
-    /* Modern Palette (2025) */
-    --mocha-mousse: #8B7355;      /* PANTONE 17-1230 - Warm, trustworthy */
-    --fresh-peach: #FF6B6B;       /* Welcoming, energetic */
-    --iris-garden: #9B59B6;       /* Lilac for luxury and calm */
-    --sage-green: #87CEEB;        /* Sage for balance */
-    --electric-blue: #4ECDC4;     /* Trust and modernity */
-    --zesty-lemon: #FFE66D;       /* Optimism and clarity */
-    --coral-accent: #FF8A80;      /* Vibrant accent */
+    /* Surface Colors */
+    --surface-color: #ffffff;
+    --background-color: #f8fafc;
+    --border-color: #e2e8f0;
+    
+    /* Text Colors */
+    --text-color: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
     
     /* Semantic Colors */
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --error-color: #ef4444;
-    --info-color: #3b82f6;
+    --fresh-peach: #ff9a8b;
+    --coral-accent: #ff6b6b;
+    --iris-garden: #a78bfa;
+    --electric-blue: #3b82f6;
+    --pastel-orange: #fdba74;
+    --muted-greens: #86efac;
+    --zesty-lemon: #fde047;
     
     /* Typography */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-size-base: 16px;
-    --font-size-sm: 14px;
-    --font-size-lg: 18px;
-    --font-size-xl: 24px;
-    --font-size-2xl: 32px;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
     
     /* Spacing */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
-    --spacing-2xl: 48px;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
     
     /* Border Radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --radius-2xl: 24px;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
     
     /* Shadows */
-    --shadow-sm: 0 2px 4px var(--shadow-color);
-    --shadow-md: 0 4px 12px var(--shadow-color);
-    --shadow-lg: 0 8px 24px var(--shadow-color);
-    --shadow-xl: 0 16px 48px var(--shadow-color);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     
     /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
+    --transition-normal: 0.2s ease-in-out;
+    --transition-fast: 0.1s ease-in-out;
+    --transition-slow: 0.3s ease-in-out;
     
-    /* Z-index */
+    /* Z-Index */
     --z-dropdown: 1000;
-    --z-modal: 2000;
-    --z-tooltip: 3000;
-    --z-notification: 4000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal: 1040;
+    --z-popover: 1050;
+    --z-tooltip: 1060;
 }
 
 /* Dark Theme Colors */
@@ -104,6 +109,7 @@ html {
     font-size: var(--font-size-base);
     scroll-behavior: smooth;
     height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -115,40 +121,25 @@ body {
     line-height: 1.6;
     transition: background var(--transition-normal);
     overflow: hidden; /* Prevent body scroll */
+    overflow-x: hidden;
+    padding-top: 0; /* Remove any body padding */
 }
 
-/* Enhanced Container - Fixed Layout */
-.container {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    grid-template-rows: 80px 1fr;
-    height: 100vh;
-    max-width: 1800px;
-    margin: 0 auto;
-    background: var(--surface-color);
-    backdrop-filter: blur(20px);
-    border-radius: var(--radius-2xl);
-    margin: var(--spacing-lg);
-    box-shadow: var(--shadow-xl);
-    overflow: hidden;
-    transition: all var(--transition-normal);
-    position: relative;
-}
-
-/* Enhanced Header - Fixed Height */
+/* Header - Fixed positioning with proper z-index */
 .header {
-    grid-column: 1 / -1;
-    grid-row: 1;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
-    padding: var(--spacing-md) var(--spacing-xl);
-    box-shadow: var(--shadow-lg);
-    position: relative;
-    overflow: hidden;
+    padding: var(--spacing-lg) var(--spacing-xl);
     height: 80px;
     display: flex;
     align-items: center;
-    z-index: 10;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
 }
 
 .header::before {
@@ -290,23 +281,27 @@ body {
     grid-row: 2;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    background: var(--background-color);
-    position: relative;
     overflow: hidden;
+    background: var(--background-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin: var(--spacing-md);
+    height: calc(100vh - 120px); /* Account for header and margins */
 }
 
 /* Enhanced Welcome Section - Better Organization */
 .welcome-section {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: var(--spacing-xl);
     text-align: center;
-    background: linear-gradient(135deg, var(--background-color) 0%, var(--surface-color) 100%);
+    background: var(--surface-color);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     overflow-y: auto;
     min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .welcome-content {
@@ -861,24 +856,29 @@ body {
     grid-column: 2;
     grid-row: 2;
     background: var(--surface-color);
-    border-left: 1px solid var(--border-color);
-    padding: var(--spacing-lg);
-    overflow-y: auto;
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin: var(--spacing-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     min-height: 0;
+    height: calc(100vh - 120px); /* Account for header and margins */
 }
 
+/* Panel header - Ensure proper visibility */
 .panel-header {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background: var(--primary-color);
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-md);
-    border-bottom: 2px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    background: var(--surface-color);
-    z-index: 5;
 }
 
 .panel-header h3 {
@@ -918,45 +918,192 @@ body {
     transform: scale(1.1);
 }
 
+/* Metrics container - Ensure proper scrolling and content visibility */
 .metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.metric-card {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
     padding: var(--spacing-lg);
-    background: var(--background-color);
-    border-radius: var(--radius-lg);
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Metric cards - Ensure proper content display */
+.metric-card {
+    background: var(--surface-color);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
     transition: all var(--transition-normal);
     position: relative;
-    overflow: hidden;
-}
-
-.metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary-color);
-    transform: scaleY(0);
-    transition: transform var(--transition-normal);
-}
-
-.metric-card:hover::before {
-    transform: scaleY(1);
+    overflow: visible; /* Ensure content is not clipped */
+    min-height: 120px; /* Ensure minimum height for content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .metric-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
     border-color: var(--primary-color);
+}
+
+/* Metric card header structure */
+.metric-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+.metric-icon {
+    background: var(--primary-color);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    flex-shrink: 0;
+}
+
+.metric-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
+}
+
+/* Metric card content - Ensure proper visibility */
+.metric-card .metric-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--text-color);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.2;
+    display: block; /* Ensure proper display */
+}
+
+.metric-card .metric-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    display: block; /* Ensure proper display */
+}
+
+.metric-card .metric-trend {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    display: block; /* Ensure proper display */
+}
+
+.metric-trend.positive {
+    color: var(--success-color);
+}
+
+.metric-trend.negative {
+    color: var(--error-color);
+}
+
+/* Sentiment chart styling */
+.sentiment-chart {
+    margin-top: var(--spacing-sm);
+}
+
+.sentiment-bar {
+    height: 8px;
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+}
+
+.sentiment-fill {
+    height: 100%;
+    transition: width var(--transition-normal);
+}
+
+.sentiment-fill.positive {
+    background: var(--success-color);
+}
+
+.sentiment-fill.neutral {
+    background: var(--warning-color);
+}
+
+.sentiment-fill.negative {
+    background: var(--error-color);
+}
+
+.sentiment-breakdown {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    font-size: var(--font-size-xs);
+}
+
+.sentiment-item {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
+
+.sentiment-item.positive {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.sentiment-item.neutral {
+    background: rgba(251, 191, 36, 0.1);
+    color: var(--warning-color);
+}
+
+.sentiment-item.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+}
+
+/* Intent chart styling */
+.intent-chart {
+    margin-top: var(--spacing-sm);
+}
+
+.intent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.intent-item:last-child {
+    border-bottom: none;
+}
+
+.intent-name {
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.intent-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
 }
 
 .metric-card.primary {
