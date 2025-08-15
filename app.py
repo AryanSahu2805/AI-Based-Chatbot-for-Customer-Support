@@ -207,8 +207,13 @@ class AIChatbot:
             if any(word in text_lower for word in billing_keywords):
                 return "billing"
             
-            # Product information keywords (expanded)
+            # Product information keywords (expanded) - but exclude damage/complaint words
             product_keywords = ['product', 'feature', 'specification', 'what is', 'how to', 'guide', 'tutorial', 'manual', 'documentation', 'capabilities', 'functionality', 'benefits', 'comparison']
+            # Check for damage/complaint words first to avoid misclassification
+            damage_keywords = ['damaged', 'broken', 'defective', 'faulty', 'not working', 'problem', 'issue', 'damage', 'destroyed', 'torn', 'ripped', 'scratched', 'cracked']
+            if any(word in text_lower for word in damage_keywords):
+                return "return_refund"  # Prioritize damage issues over general product info
+            
             if any(word in text_lower for word in product_keywords):
                 return "product_info"
             
@@ -268,32 +273,45 @@ User's Intent: {intent}
 Sentiment: {sentiment.sentiment} (confidence: {sentiment.confidence:.2f})
 Entities Detected: {[f"{e.type}: {e.text}" for e in entities]}
 
-Guidelines:
-- Provide helpful, accurate, and friendly responses
+CRITICAL GUIDELINES:
+- ALWAYS address the user's specific intent first - don't give generic responses
+- If intent is "return_refund" or mentions damage/defects, focus on helping with returns/refunds
+- If intent is "technical_support", focus on troubleshooting and technical assistance
+- If intent is "billing", focus on payment and account issues
+- If intent is "product_info", provide specific product details, not generic help
 - Keep responses concise and professional (under 150 words)
 - If sentiment is negative, be extra empathetic and helpful
-- If technical issues are mentioned, ask for specific details
-- If billing issues, ask for account/order information
-- Always offer to escalate to human support if needed
-- Use the user's name if provided in context
-- Be conversational but professional"""
+- Always ask for specific details needed to help (order numbers, account info, etc.)
+- Offer to escalate to human support if needed
+- Be conversational but professional
+- NEVER give generic "how can I help" responses when user has a specific issue"""
             }
             
             # Prepare messages for OpenAI
             messages = [system_message] + context + [{"role": "user", "content": processed_message}]
             
             # Generate response using OpenAI
-            if client:
-                response = client.chat.completions.create(
-                    model=OPENAI_MODEL,
-                    messages=messages,
-                    max_tokens=MAX_TOKENS,
-                    temperature=TEMPERATURE
-                )
-                ai_response = response.choices[0].message.content
+            ai_response = ""
+            logger.info(f"OpenAI client available: {client is not None}, API key configured: {bool(OPENAI_API_KEY and OPENAI_API_KEY != 'your_openai_api_key_here')}")
+            
+            if client and OPENAI_API_KEY and OPENAI_API_KEY != "your_openai_api_key_here":
+                try:
+                    response = client.chat.completions.create(
+                        model=OPENAI_MODEL,
+                        messages=messages,
+                        max_tokens=MAX_TOKENS,
+                        temperature=TEMPERATURE
+                    )
+                    ai_response = response.choices[0].message.content
+                    logger.info("Using OpenAI API response")
+                except Exception as e:
+                    logger.error(f"Error calling OpenAI API: {e}")
+                    ai_response = self._generate_fallback_response(intent, processed_message, sentiment)
+                    logger.info("Using fallback response due to OpenAI API error")
             else:
-                # Enhanced fallback response
+                # Enhanced fallback response when OpenAI is not available
                 ai_response = self._generate_fallback_response(intent, processed_message, sentiment)
+                logger.info("Using fallback response - OpenAI not available")
             
             # Calculate response time
             response_time = time.time() - start_time
@@ -383,6 +401,7 @@ Guidelines:
     def _generate_fallback_response(self, intent: str, message: str, sentiment: SentimentAnalysis) -> str:
         """Generate highly specific, contextual fallback responses when OpenAI is unavailable"""
         
+        logger.info(f"Fallback method called with intent: {intent}, message: {message}")
         message_lower = message.lower()
         
         # HIGHLY SPECIFIC responses based on exact user input
@@ -403,9 +422,10 @@ Guidelines:
             else:
                 return "I see you're having a shirt sizing issue. To help you quickly, I need:\n\n1. Your order number\n2. What size you ordered vs. received\n3. Whether you want an exchange or refund\n\nWhat's your order number?"
         
-        # TECHNICAL SUPPORT SPECIFIC responses
-        if any(word in message_lower for word in ['app', 'crash', 'not working', 'error', 'bug', 'problem']):
-            if 'app' in message_lower and 'crash' in message_lower:
+        # TECHNICAL SUPPORT SPECIFIC responses (HIGH PRIORITY)
+        if any(word in message_lower for word in ['app', 'crash', 'not working', 'error', 'bug', 'problem', 'crashing', 'crashed']):
+            # Check for app crash specifically (more flexible)
+            if 'app' in message_lower and any(crash_word in message_lower for crash_word in ['crash', 'crashing', 'crashed']):
                 return "I understand your app is crashing. Let me help troubleshoot this specific issue:\n\n1. What device are you using? (iOS/Android/Desktop)\n2. What's your app version?\n3. What were you doing when it crashed?\n4. Does this happen every time?\n\nThis will help me provide the right solution or escalate to our technical team."
             elif 'not working' in message_lower:
                 return "I see something isn't working for you. To help fix this quickly, I need to know:\n\n1. What exactly isn't working?\n2. What were you trying to do?\n3. What error messages do you see?\n4. When did this start happening?\n\nLet me get this resolved for you right away."
@@ -421,16 +441,14 @@ Guidelines:
             else:
                 return "I can help with your billing/payment question. To assist you effectively, I need:\n\n1. Your account number or email\n2. What specific issue you're experiencing\n3. When this occurred\n\nI'll look into this right away."
         
-        # PRODUCT INFORMATION SPECIFIC responses
-        if any(word in message_lower for word in ['product', 'feature', 'what is', 'how to']):
-            if 'what is' in message_lower:
-                return "I'd be happy to explain what you're asking about! To give you the most helpful information, could you specify:\n\n1. Which product or feature you're interested in?\n2. What specific details you need?\n3. Are you looking for pricing, features, or how-to instructions?\n\nLet me know what would be most helpful!"
-            elif 'how to' in message_lower:
-                return "I'd be happy to show you how to do that! To provide the right guidance, I need to know:\n\n1. What specific task you want to accomplish?\n2. Which product or feature you're using?\n3. What step are you currently stuck on?\n\nI'll give you step-by-step instructions!"
+        # DAMAGED PRODUCT SPECIFIC responses (HIGHEST PRIORITY - check this first!)
+        if any(word in message_lower for word in ['damaged', 'broken', 'defective', 'faulty', 'destroyed', 'torn', 'ripped', 'scratched', 'cracked']):
+            if 'product' in message_lower:
+                return "I'm sorry to hear your product arrived damaged! This is definitely not acceptable. Let me help you get this resolved immediately:\n\n1. Please provide your order number\n2. Describe the damage you see\n3. If possible, take photos of the damage\n4. I'll process a replacement or refund right away\n\nWhat's your order number? I want to make this right for you."
             else:
-                return "I'd be happy to provide product information! What specific details would you like to know?\n\n- Product features and specifications\n- Pricing and packages\n- Comparison with other products\n- How to use specific features\n\nWhat would be most helpful for you?"
+                return "I understand you have a damaged item. This is something we need to fix immediately. Please provide:\n\n1. Your order number\n2. Description of the damage\n3. When you received it\n4. I'll process a replacement or refund right away\n\nWhat's your order number?"
         
-        # RETURN/REFUND SPECIFIC responses
+        # RETURN/REFUND SPECIFIC responses (HIGH PRIORITY)
         if any(word in message_lower for word in ['return', 'refund', 'exchange', 'wrong']):
             if 'wrong' in message_lower and ('color' in message_lower or 'item' in message_lower):
                 return "I see you received the wrong item/color. This is definitely something we need to fix right away. Please provide:\n\n1. Your order number\n2. What you ordered vs. what you received\n3. Any photos if possible\n\nI'll process an immediate replacement and return label for the incorrect item."
@@ -438,6 +456,18 @@ Guidelines:
                 return "I understand you want to return the shirt/clothing you received. Here's how to proceed:\n\n1. Please provide your order number\n2. Explain the reason for return (wrong color, size, etc.)\n3. I'll generate a return label for you\n4. You'll receive a refund within 5-7 business days\n\nWhat's your order number?"
             else:
                 return "I can help you with your return/refund request. To process this quickly, I need:\n\n1. Your order number\n2. Reason for return\n3. Whether you want a refund or exchange\n\nWhat's your order number?"
+        
+        # PRODUCT INFORMATION SPECIFIC responses (LOWER PRIORITY - only if no damage/return issues)
+        if any(word in message_lower for word in ['product', 'feature', 'what is', 'how to']):
+            # Skip if this is about damage or returns
+            if any(word in message_lower for word in ['damaged', 'broken', 'defective', 'faulty', 'return', 'refund', 'exchange']):
+                pass  # Skip to next check
+            elif 'what is' in message_lower:
+                return "I'd be happy to explain what you're asking about! To give you the most helpful information, could you specify:\n\n1. Which product or feature you're interested in?\n2. What specific details you need?\n3. Are you looking for pricing, features, or how-to instructions?\n\nLet me know what would be most helpful!"
+            elif 'how to' in message_lower:
+                return "I'd be happy to show you how to do that! To provide the right guidance, I need to know:\n\n1. What specific task you want to accomplish?\n2. Which product or feature you're using?\n3. What step are you currently stuck on?\n\nI'll give you step-by-step instructions!"
+            else:
+                return "I'd be happy to provide product information! What specific details would you like to know?\n\n- Product features and specifications\n- Pricing and packages\n- Comparison with other products\n- How to use specific features\n\nWhat would be most helpful for you?"
         
         # ACCOUNT MANAGEMENT SPECIFIC responses
         if any(word in message_lower for word in ['account', 'password', 'login', 'signin', 'signup']):
