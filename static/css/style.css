@@ -149,12 +149,12 @@ html {
     height: 100%;
 }
 
-/* Header - Fixed positioning with proper z-index */
+/* Header - Minimal height to eliminate white space */
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
-    padding: var(--spacing-lg) var(--spacing-xl);
-    height: 80px;
+    padding: var(--spacing-sm) var(--spacing-md); /* Reduced padding */
+    height: 40px; /* Reduced height to minimize white space */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -164,7 +164,7 @@ html {
     right: 0;
     z-index: 100;
     box-shadow: var(--shadow-md);
-    margin-top: 2px; /* Add small top margin to prevent cropping */
+    margin-top: 0; /* Removed margin */
 }
 
 .header::before {
@@ -300,7 +300,7 @@ html {
     box-shadow: var(--shadow-md);
 }
 
-/* Main Chat Container - Fixed Layout */
+/* Main Chat Container - Optimized Layout */
 .chat-container {
     grid-column: 1;
     grid-row: 2;
@@ -310,24 +310,27 @@ html {
     background: var(--surface-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    margin: var(--spacing-md);
-    height: calc(100vh - 120px); /* Account for header and margins */
-    position: relative; /* Ensure proper positioning */
-    border: 1px solid var(--border-color); /* Add border for visibility */
+    margin: 0; /* Removed margin for tighter layout */
+    height: calc(100vh - 50px); /* Adjusted for new header height */
+    max-height: calc(100vh - 50px);
+    position: relative;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
 }
 
-/* Container - Proper grid layout with fully visible Performance Metrics */
+/* Container - Eliminate excessive white space and ensure perfect fit */
 .container {
     display: grid;
-    grid-template-columns: 1fr 450px; /* Increased right column width for full visibility */
-    grid-template-rows: 80px 1fr;
+    grid-template-columns: 1fr 480px;
+    grid-template-rows: 50px 1fr; /* Reduced header height to 50px */
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    padding-top: 82px;
-    gap: var(--spacing-lg); /* Increased gap for better separation */
-    overflow: visible;
+    padding-top: 42px; /* Drastically reduced from 52px to 42px to eliminate white space */
+    gap: var(--spacing-sm); /* Reduced gap for tighter layout */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* Enhanced Welcome Section - Better Organization */
@@ -724,13 +727,19 @@ html {
     }
 }
 
-/* Enhanced Chat Input - Fixed Position */
+/* Enhanced Chat Input - Optimized Position and Sizing */
 .chat-input-container {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm); /* Reduced padding */
     background: var(--surface-color);
     border-top: 1px solid var(--border-color);
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     flex-shrink: 0;
+    min-height: 50px; /* Reduced height */
+    box-sizing: border-box;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: auto; /* Push to bottom of container */
 }
 
 .input-wrapper {
@@ -777,11 +786,16 @@ html {
     flex: 1;
     border: none;
     background: transparent;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-sm); /* Reduced padding */
     font-size: var(--font-size-base);
     color: var(--text-color);
     outline: none;
     font-family: inherit;
+    min-height: 36px; /* Reduced height */
+    max-height: 100px; /* Reduced max height */
+    box-sizing: border-box;
+    resize: none;
+    overflow-y: auto;
 }
 
 #messageInput::placeholder {
@@ -850,50 +864,47 @@ html {
     animation: typing 1.4s infinite ease-in-out;
 }
 
-/* Smart Suggestions - Better Colors */
+/* Smart Suggestions - Ensure visibility */
 .smart-suggestions {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    flex-wrap: wrap;
-    margin-top: var(--spacing-sm);
+    background: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-sm);
+    display: none;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+    max-height: 100px; /* Reduced height */
+    overflow-y: auto;
 }
 
-.suggestions-label {
-    font-size: var(--font-size-sm);
-    color: var(--text-color);
-    opacity: 0.7;
-    font-weight: 500;
+.smart-suggestions.show {
+    display: flex;
 }
 
 .suggestion-chips {
     display: flex;
-    gap: var(--spacing-xs);
     flex-wrap: wrap;
+    gap: var(--spacing-xs);
 }
 
 .suggestion-chip {
     background: var(--primary-color);
     color: white;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-sm);
+    padding: 4px 8px; /* Reduced padding */
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs); /* Reduced font size */
     cursor: pointer;
     transition: all var(--transition-normal);
     border: none;
-    font-weight: 500;
-    max-width: 200px;
-    text-align: center;
-    line-height: 1.4;
+    white-space: nowrap;
 }
 
 .suggestion-chip:hover {
     background: var(--secondary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
 }
 
-/* Enhanced Analytics Panel - Fixed Layout */
+/* Enhanced Analytics Panel - Optimized Layout */
 .analytics-panel {
     grid-column: 2;
     grid-row: 2;
@@ -903,20 +914,20 @@ html {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 50px); /* Adjusted for new header height */
+    max-height: calc(100vh - 50px);
     border: 2px solid var(--primary-color);
     position: relative;
-    width: 100%; /* Ensure full width */
+    width: 100%;
     box-sizing: border-box;
-    margin: 0; /* Remove margins that cause misalignment */
-    max-height: calc(100vh - 120px); /* Ensure proper height constraint */
+    margin: 0;
 }
 
-/* Panel header - Ensure proper visibility and full width */
+/* Panel header - Minimal height */
 .panel-header {
     background: var(--primary-color);
     color: white;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm); /* Minimal padding */
     border-bottom: 2px solid var(--border-color);
     position: sticky;
     top: 0;
@@ -925,10 +936,11 @@ html {
     justify-content: space-between;
     align-items: center;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    min-height: 60px;
+    height: 40px; /* Reduced height */
+    min-height: 40px;
     width: 100%;
     box-sizing: border-box;
-    flex-shrink: 0; /* Prevent header from shrinking */
+    flex-shrink: 0;
 }
 
 .panel-header h3 {
@@ -981,31 +993,213 @@ html {
     color: white;
 }
 
-/* Metrics container - Ensure proper scrolling and full visibility */
+/* Metrics container - Fixed scrolling and proper height with better layout */
 .metrics-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    padding: var(--spacing-lg);
-    overflow-y: auto;
+    grid-template-rows: repeat(3, 1fr); /* Fixed 3 rows for 6 cards */
+    gap: var(--spacing-sm); /* Reduced gap between cards */
+    padding: var(--spacing-sm); /* Reduced padding to give more space to cards */
+    overflow-y: scroll !important; /* Force scrolling to work */
+    overflow-x: hidden;
     flex: 1;
     min-height: 0;
     background: var(--background-color);
     border-top: 1px solid var(--border-color);
     width: 100%;
     box-sizing: border-box;
-    max-height: calc(100vh - 200px); /* Ensure proper height calculation */
-    height: auto; /* Allow natural height */
+    height: calc(100vh - 90px); /* Adjusted for new header height */
+    max-height: calc(100vh - 90px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--border-color);
 }
 
-/* Ensure metric cards are visible and properly positioned */
-.metrics-container:empty::after {
-    content: "Loading metrics...";
-    display: block;
+/* Ensure metric cards are larger and fit properly */
+.metric-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md); /* Increased padding for better content display */
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-height: 140px; /* Increased height for better content fit */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    height: auto;
+    max-height: 200px; /* Increased max height */
+}
+
+/* Metric card header - Better content containment */
+.metric-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm); /* Increased gap for better spacing */
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.metric-icon {
+    flex-shrink: 0;
+    width: 36px; /* Increased from 32px for better visibility */
+    height: 36px; /* Increased from 32px for better visibility */
+    background: var(--primary-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-sm);
+}
+
+.metric-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
+    width: calc(100% - 36px - var(--spacing-sm)); /* Adjusted for new icon size */
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Metric labels and values - Better sizing */
+.metric-label {
+    font-size: var(--font-size-sm); /* Increased from xs for better readability */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.2;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.metric-value {
+    font-size: var(--font-size-lg); /* Increased from md for better visibility */
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.1;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.metric-trend {
+    font-size: var(--font-size-xs);
+    padding: 3px 8px; /* Increased padding for better visibility */
+    border-radius: var(--radius-sm);
+    font-weight: 500;
     text-align: center;
-    padding: var(--spacing-xl);
-    color: var(--text-secondary);
-    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Sentiment and Intent charts - Ensure proper content containment */
+.sentiment-chart, .intent-chart {
+    width: 100%;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.sentiment-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xs);
+}
+
+.sentiment-fill {
+    height: 100%;
+    transition: width var(--transition-normal);
+    min-width: 0;
+}
+
+.sentiment-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    width: 100%;
+    overflow: hidden;
+}
+
+.sentiment-item {
+    font-size: var(--font-size-xs);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Intent items - Fixed right-side cutoff with better layout */
+.intent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px; /* Increased padding for better content fit */
+    background: var(--background-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px; /* Increased margin for better separation */
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    gap: var(--spacing-xs);
+}
+
+.intent-name {
+    font-size: var(--font-size-sm); /* Increased from xs for better readability */
+    color: var(--text-primary);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
+}
+
+.intent-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 3px 6px; /* Increased padding for better visibility */
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 20px; /* Increased from 16px for better visibility */
+    text-align: center;
+}
+
+/* Custom scrollbar for better visibility */
+.metrics-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.metrics-container::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.metrics-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: var(--radius-sm);
+}
+
+.metrics-container::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
 }
 
 /* Debug: Add outline to see panel boundaries */
@@ -1199,150 +1393,6 @@ html {
 .intent-chart {
     margin-top: var(--spacing-sm);
     width: 100%; /* Ensure full width */
-}
-
-.intent-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-xs) 0;
-    border-bottom: 1px solid var(--border-color);
-    width: 100%; /* Ensure full width */
-}
-
-.intent-item:last-child {
-    border-bottom: none;
-}
-
-.intent-name {
-    font-size: var(--font-size-sm);
-    color: var(--text-color);
-    font-weight: 500;
-    flex: 1; /* Take available space */
-    word-break: break-word; /* Prevent text overflow */
-}
-
-.intent-badge {
-    background: var(--primary-color);
-    color: white;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    min-width: 24px;
-    text-align: center;
-    flex-shrink: 0; /* Prevent badge shrinking */
-}
-
-.metric-card.primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    border-color: transparent;
-}
-
-.metric-card.primary .metric-content h4,
-.metric-card.primary .metric-content p {
-    color: white;
-}
-
-.metric-icon {
-    width: 55px;
-    height: 55px;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-    box-shadow: var(--shadow-md);
-}
-
-.metric-card.primary .metric-icon {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-}
-
-.metric-content {
-    flex: 1;
-}
-
-.metric-content h4 {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--text-color);
-    margin-bottom: var(--spacing-xs);
-    opacity: 0.8;
-}
-
-.metric-content p {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--text-color);
-    margin-bottom: var(--spacing-xs);
-}
-
-.metric-trend {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    display: inline-block;
-}
-
-.metric-trend.positive {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success-color);
-}
-
-.metric-trend.negative {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--error-color);
-}
-
-/* Sentiment Chart */
-.sentiment-card .metric-content {
-    width: 100%;
-}
-
-.sentiment-chart {
-    height: 20px;
-    background: var(--border-color);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    margin: var(--spacing-sm) 0;
-    display: flex;
-}
-
-.sentiment-bar {
-    height: 100%;
-    transition: width var(--transition-slow);
-}
-
-.sentiment-bar.positive {
-    background: var(--success-color);
-}
-
-.sentiment-bar.neutral {
-    background: var(--warning-color);
-}
-
-.sentiment-bar.negative {
-    background: var(--error-color);
-}
-
-.sentiment-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--font-size-sm);
-    color: var(--text-color);
-    opacity: 0.7;
-}
-
-/* Intent Chart */
-.intent-chart {
-    margin-top: var(--spacing-sm);
 }
 
 .intent-item {
@@ -1919,7 +1969,7 @@ button:focus {
 /* Responsive Enhancements */
 @media (max-width: 1400px) {
     .container {
-        grid-template-columns: 1fr 400px;
+        grid-template-columns: 1fr 450px;
         gap: var(--spacing-md);
     }
     
@@ -1930,7 +1980,7 @@ button:focus {
 
 @media (max-width: 1200px) {
     .container {
-        grid-template-columns: 1fr 380px;
+        grid-template-columns: 1fr 420px;
         gap: var(--spacing-sm);
     }
     
@@ -1944,7 +1994,8 @@ button:focus {
         grid-template-columns: 1fr;
         grid-template-rows: 80px 1fr auto;
         margin: var(--spacing-sm);
-        height: 100vh;
+        height: auto;
+        min-height: 100vh;
     }
     
     .analytics-panel {
@@ -1952,11 +2003,14 @@ button:focus {
         grid-row: 3;
         height: auto;
         max-height: 600px;
+        margin-top: var(--spacing-md);
     }
     
     .chat-container {
         grid-column: 1;
         grid-row: 2;
+        height: auto;
+        min-height: 400px;
     }
     
     .quick-actions {

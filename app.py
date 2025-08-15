@@ -381,48 +381,117 @@ Guidelines:
         return suggestions[:3]  # Limit to 3 suggestions
     
     def _generate_fallback_response(self, intent: str, message: str, sentiment: SentimentAnalysis) -> str:
-        """Generate enhanced fallback response when OpenAI is unavailable"""
+        """Generate highly specific, contextual fallback responses when OpenAI is unavailable"""
         
-        # Check for specific keywords in the message for better context
         message_lower = message.lower()
         
-        # Return/Refund specific responses
-        if 'return' in message_lower or 'refund' in message_lower:
-            if 'shirt' in message_lower or 'clothing' in message_lower:
-                return "I understand you want to return the shirt you received. Here's how to proceed:\n\n1. Please provide your order number\n2. Explain the reason for return (wrong color, size, etc.)\n3. I'll generate a return label for you\n4. You'll receive a refund within 5-7 business days\n\nWhat's your order number?"
-            elif 'wrong' in message_lower and ('color' in message_lower or 'item' in message_lower):
+        # HIGHLY SPECIFIC responses based on exact user input
+        if 'hi' in message_lower or 'hello' in message_lower:
+            if 'shirt' in message_lower or 'size' in message_lower:
+                return "Hello! I see you mentioned a shirt size issue. Let me help you with that specifically. What size did you order and what size did you receive? I'll get this sorted out right away."
+            elif 'problem' in message_lower or 'issue' in message_lower:
+                return "Hello! I understand you're experiencing a problem. Let me help you resolve it. Can you tell me more about what's happening?"
+            else:
+                return "Hello! I'm here to help you with any questions or concerns. How can I assist you today?"
+        
+        # SHIRT SIZE SPECIFIC responses
+        if 'shirt' in message_lower and 'size' in message_lower:
+            if 'small' in message_lower:
+                return "I see you're having an issue with a small shirt size. Let me help you get the right size:\n\n1. What size did you actually order?\n2. What size did you receive?\n3. What's your order number?\n\nI can help you get the correct size or process an exchange immediately."
+            elif 'big' in message_lower or 'large' in message_lower:
+                return "I understand the shirt you received is too big. Let me help you get the right size:\n\n1. What size did you order?\n2. What size did you receive?\n3. What's your order number?\n\nI'll process a size exchange for you right away."
+            else:
+                return "I see you're having a shirt sizing issue. To help you quickly, I need:\n\n1. Your order number\n2. What size you ordered vs. received\n3. Whether you want an exchange or refund\n\nWhat's your order number?"
+        
+        # TECHNICAL SUPPORT SPECIFIC responses
+        if any(word in message_lower for word in ['app', 'crash', 'not working', 'error', 'bug', 'problem']):
+            if 'app' in message_lower and 'crash' in message_lower:
+                return "I understand your app is crashing. Let me help troubleshoot this specific issue:\n\n1. What device are you using? (iOS/Android/Desktop)\n2. What's your app version?\n3. What were you doing when it crashed?\n4. Does this happen every time?\n\nThis will help me provide the right solution or escalate to our technical team."
+            elif 'not working' in message_lower:
+                return "I see something isn't working for you. To help fix this quickly, I need to know:\n\n1. What exactly isn't working?\n2. What were you trying to do?\n3. What error messages do you see?\n4. When did this start happening?\n\nLet me get this resolved for you right away."
+            else:
+                return "I understand you're experiencing a technical issue. Our support team will help you resolve this. Please provide:\n\n1. What specific problem you're facing\n2. Any error messages you see\n3. What you were doing when it happened\n\nI'll make sure this gets resolved quickly."
+        
+        # BILLING SPECIFIC responses
+        if any(word in message_lower for word in ['bill', 'payment', 'charge', 'cost', 'price']):
+            if 'bill' in message_lower:
+                return "I can help with your billing question. To assist you effectively, I need:\n\n1. Your account number or email\n2. What specific billing issue you're experiencing\n3. When this occurred\n\nI'll look into this right away and get it resolved for you."
+            elif 'payment' in message_lower:
+                return "I understand you have a payment question. Let me help you with that:\n\n1. What payment method are you using?\n2. What specific payment issue are you facing?\n3. When did this happen?\n\nI'll get this sorted out for you immediately."
+            else:
+                return "I can help with your billing/payment question. To assist you effectively, I need:\n\n1. Your account number or email\n2. What specific issue you're experiencing\n3. When this occurred\n\nI'll look into this right away."
+        
+        # PRODUCT INFORMATION SPECIFIC responses
+        if any(word in message_lower for word in ['product', 'feature', 'what is', 'how to']):
+            if 'what is' in message_lower:
+                return "I'd be happy to explain what you're asking about! To give you the most helpful information, could you specify:\n\n1. Which product or feature you're interested in?\n2. What specific details you need?\n3. Are you looking for pricing, features, or how-to instructions?\n\nLet me know what would be most helpful!"
+            elif 'how to' in message_lower:
+                return "I'd be happy to show you how to do that! To provide the right guidance, I need to know:\n\n1. What specific task you want to accomplish?\n2. Which product or feature you're using?\n3. What step are you currently stuck on?\n\nI'll give you step-by-step instructions!"
+            else:
+                return "I'd be happy to provide product information! What specific details would you like to know?\n\n- Product features and specifications\n- Pricing and packages\n- Comparison with other products\n- How to use specific features\n\nWhat would be most helpful for you?"
+        
+        # RETURN/REFUND SPECIFIC responses
+        if any(word in message_lower for word in ['return', 'refund', 'exchange', 'wrong']):
+            if 'wrong' in message_lower and ('color' in message_lower or 'item' in message_lower):
                 return "I see you received the wrong item/color. This is definitely something we need to fix right away. Please provide:\n\n1. Your order number\n2. What you ordered vs. what you received\n3. Any photos if possible\n\nI'll process an immediate replacement and return label for the incorrect item."
+            elif 'shirt' in message_lower or 'clothing' in message_lower:
+                return "I understand you want to return the shirt/clothing you received. Here's how to proceed:\n\n1. Please provide your order number\n2. Explain the reason for return (wrong color, size, etc.)\n3. I'll generate a return label for you\n4. You'll receive a refund within 5-7 business days\n\nWhat's your order number?"
             else:
                 return "I can help you with your return/refund request. To process this quickly, I need:\n\n1. Your order number\n2. Reason for return\n3. Whether you want a refund or exchange\n\nWhat's your order number?"
         
-        # Technical support specific responses
-        elif 'app' in message_lower and ('crash' in message_lower or 'not working' in message_lower):
-            return "I understand your app is having issues. Let me help troubleshoot:\n\n1. What device are you using? (iOS/Android/Desktop)\n2. What's your app version?\n3. What were you doing when it crashed?\n4. Does this happen every time?\n\nThis will help me provide the right solution or escalate to our technical team."
+        # ACCOUNT MANAGEMENT SPECIFIC responses
+        if any(word in message_lower for word in ['account', 'password', 'login', 'signin', 'signup']):
+            if 'password' in message_lower:
+                return "I can help you with your password issue. To assist you quickly, I need to know:\n\n1. Are you trying to reset your password?\n2. Are you having trouble logging in?\n3. What's your email address?\n\nI'll help you get back into your account right away."
+            elif 'login' in message_lower or 'signin' in message_lower:
+                return "I understand you're having trouble logging in. Let me help you with that:\n\n1. What happens when you try to log in?\n2. Do you see any error messages?\n3. Are you using the correct email?\n\nI'll get you logged in quickly."
+            else:
+                return "I can help you with account-related questions. What specific account issue are you experiencing?\n\n• Password reset\n• Profile updates\n• Account settings\n• Login issues\n• Account creation\n\nLet me know what you need help with!"
         
-        # Billing specific responses
-        elif 'bill' in message_lower or 'payment' in message_lower:
-            return "I can help with your billing question. To assist you effectively, I need:\n\n1. Your account number or email\n2. What specific billing issue you're experiencing\n3. When this occurred\n\nI'll look into this right away and get it resolved for you."
+        # PAST ORDER SPECIFIC responses
+        if any(word in message_lower for word in ['past order', 'previous order', 'order history']):
+            return "I'd be happy to help you with your past order! To assist you effectively, I need:\n\n1. Your order number or email address\n2. What specific information you need about the order\n3. When the order was placed\n\nWhat would you like to know about your order?"
         
-        # Product information specific responses
-        elif 'product' in message_lower or 'feature' in message_lower:
-            return "I'd be happy to provide product information! What specific details would you like to know?\n\n- Product features and specifications\n- Pricing and packages\n- Comparison with other products\n- How to use specific features\n\nWhat would be most helpful for you?"
+        # HELP SPECIFIC responses
+        if 'help' in message_lower:
+            if 'technical' in message_lower:
+                return "I'm here to help with your technical issue! To assist you effectively, I need:\n\n1. What specific technical problem are you facing?\n2. What device/software are you using?\n3. What error messages do you see?\n\nLet me get this resolved for you quickly."
+            else:
+                return "I'm here to help! I can assist you with:\n\n• Technical support and troubleshooting\n• Billing and payment questions\n• Product information and features\n• Returns and refunds\n• Account management\n\nWhat specific help do you need today?"
         
-        # Default intent-based responses
-        fallback_responses = {
-            "return_refund": "I understand you want to return or request a refund. Please provide your order number and the reason for your request. I'll help you with the process.",
-            "technical_support": "I understand you're experiencing a technical issue. Our support team will be happy to help you resolve this. Please provide more details about the problem, including any error messages you're seeing.",
-            "billing": "I can help you with billing questions. Could you please provide your account number or describe the specific billing issue you're experiencing? I'll make sure to get this resolved for you.",
-            "product_info": "I'd be happy to provide information about our products. What specific details would you like to know? I can help with features, pricing, or comparisons.",
-            "complaint": "I'm sorry to hear about your experience. I want to help resolve this issue and ensure it doesn't happen again. Could you please provide more details about what happened?",
-            "feedback": "Thank you for your feedback! We value your input and use it to improve our services. Could you please elaborate on your suggestions?",
-            "account_management": "I can help you with account-related questions. What specific account issue are you experiencing? I'll guide you through the process.",
-            "general_inquiry": "Hello! I'm here to help you with any questions or concerns. How can I assist you today?",
-            "error": "I apologize for the technical difficulties. Please try again in a moment, or contact our support team if the issue persists."
-        }
+        # QUESTION/ASK SPECIFIC responses
+        if any(word in message_lower for word in ['question', 'ask']):
+            return "I'm here to answer your questions! Feel free to ask me about:\n\n• Our products and services\n• Technical support\n• Billing and payments\n• Returns and refunds\n• Account management\n\nWhat would you like to know?"
         
-        base_response = fallback_responses.get(intent, fallback_responses["general_inquiry"])
+        # COMPLAINT SPECIFIC responses
+        if any(word in message_lower for word in ['complaint', 'unhappy', 'dissatisfied', 'angry', 'frustrated']):
+            return "I'm sorry to hear about your experience. I want to help resolve this issue and ensure it doesn't happen again. Could you please provide more details about what happened? I'm here to make this right for you."
         
-        # Add sentiment-aware language
+        # FEEDBACK SPECIFIC responses
+        if any(word in message_lower for word in ['feedback', 'suggest', 'improve', 'idea']):
+            return "Thank you for your feedback! We value your input and use it to improve our services. Could you please elaborate on your suggestions? I'd love to hear your ideas for making our service better."
+        
+        # INTENT-BASED responses as final fallback (only if no specific keywords matched)
+        if intent == "return_refund":
+            return "I understand you want to return or request a refund. Please provide your order number and the reason for your request. I'll help you with the process."
+        elif intent == "technical_support":
+            return "I understand you're experiencing a technical issue. Our support team will be happy to help you resolve this. Please provide more details about the problem, including any error messages you're seeing."
+        elif intent == "billing":
+            return "I can help you with billing questions. Could you please provide your account number or describe the specific billing issue you're experiencing? I'll make sure to get this resolved for you."
+        elif intent == "product_info":
+            return "I'd be happy to provide information about our products. What specific details would you like to know? I can help with features, pricing, or comparisons."
+        elif intent == "complaint":
+            return "I'm sorry to hear about your experience. I want to help resolve this issue and ensure it doesn't happen again. Could you please provide more details about what happened?"
+        elif intent == "feedback":
+            return "Thank you for your feedback! We value your input and use it to improve our services. Could you please elaborate on your suggestions?"
+        elif intent == "account_management":
+            return "I can help you with account-related questions. What specific account issue are you experiencing? I'll guide you through the process."
+        elif intent == "error":
+            return "I apologize for the technical difficulties. Please try again in a moment, or contact our support team if the issue persists."
+        
+        # Final fallback with sentiment awareness
+        base_response = "Hello! I'm here to help you with any questions or concerns. How can I assist you today?"
+        
         if sentiment.sentiment == "negative":
             base_response = "I understand this is frustrating and I want to help resolve it quickly. " + base_response
         elif sentiment.sentiment == "positive":

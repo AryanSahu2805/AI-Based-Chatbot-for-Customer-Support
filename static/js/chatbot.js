@@ -18,6 +18,7 @@ class EnhancedChatbotUI {
         this.loadAnalytics();
         this.setupAutoRefresh();
         this.setupAccessibility();
+        this.initializeMetricsScrolling();
     }
     
     initializeElements() {
@@ -1011,74 +1012,125 @@ class EnhancedChatbotUI {
     }
     
     toggleAnalyticsPanel() {
-        const analyticsPanel = document.getElementById('analyticsPanel');
-        const expandBtn = this.expandAnalyticsBtn;
+        const panel = this.analyticsPanel;
+        const isExpanded = panel.classList.contains('expanded');
+        const closeBtn = document.getElementById('closeAnalyticsPanel');
+        const expandBtn = document.getElementById('expandAnalytics');
         
-        if (analyticsPanel.classList.contains('expanded')) {
-            // Collapse back to normal
-            analyticsPanel.classList.remove('expanded');
-            expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            expandBtn.setAttribute('aria-label', 'Expand analytics');
+        if (isExpanded) {
+            // Collapse panel
+            panel.classList.remove('expanded');
+            document.body.style.overflow = 'auto';
             
-            // Restore body scroll
-            document.body.style.overflow = '';
+            // Hide close button, show expand button
+            if (closeBtn) closeBtn.style.display = 'none';
+            if (expandBtn) expandBtn.style.display = 'inline-block';
             
-            // Show success notification
-            this.showNotification('Analytics panel minimized', 'info');
+            // Ensure proper scrolling in collapsed state
+            const metricsContainer = panel.querySelector('.metrics-container');
+            if (metricsContainer) {
+                metricsContainer.style.overflowY = 'scroll';
+                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
+                metricsContainer.style.height = 'calc(100vh - 90px)';
+                // Force scrollbar to be visible
+                metricsContainer.style.overflowY = 'scroll';
+            }
         } else {
-            // Expand to full screen
-            analyticsPanel.classList.add('expanded');
-            expandBtn.innerHTML = '<i class="fas fa-compress"></i>';
-            expandBtn.setAttribute('aria-label', 'Collapse analytics');
-            
-            // Prevent body scroll when expanded
+            // Expand panel
+            panel.classList.add('expanded');
             document.body.style.overflow = 'hidden';
             
-            // Show success notification
-            this.showNotification('Analytics panel expanded to full screen', 'success');
+            // Show close button, hide expand button
+            if (closeBtn) closeBtn.style.display = 'inline-block';
+            if (expandBtn) expandBtn.style.display = 'none';
             
-            // Refresh analytics data for better full-screen experience
-            this.refreshAnalytics();
+            // Ensure proper scrolling in expanded state
+            const metricsContainer = panel.querySelector('.metrics-container');
+            if (metricsContainer) {
+                metricsContainer.style.overflowY = 'scroll';
+                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
+                metricsContainer.style.height = 'calc(100vh - 90px)';
+                // Force scrollbar to be visible
+                metricsContainer.style.overflowY = 'scroll';
+            }
         }
     }
-    
-    closeAnalyticsPanel() {
-        const analyticsPanel = document.getElementById('analyticsPanel');
-        const expandBtn = this.expandAnalyticsBtn;
-        
-        // Collapse back to normal
-        analyticsPanel.classList.remove('expanded');
-        expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
-        expandBtn.setAttribute('aria-label', 'Expand analytics');
-        
-        // Restore body scroll
-        document.body.style.overflow = '';
-        
-        // Show success notification
-        this.showNotification('Analytics panel closed', 'info');
-    }
-    
+
     refreshAnalytics() {
+        console.log('Refreshing analytics...');
+        
         // Show loading state
         const refreshBtn = this.refreshBtn;
-        const originalContent = refreshBtn.innerHTML;
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        refreshBtn.disabled = true;
-        
-        // Reload analytics
-        this.loadAnalytics().then(() => {
-            // Restore button state
-            refreshBtn.innerHTML = originalContent;
-            refreshBtn.disabled = false;
+        if (refreshBtn) {
+            const originalIcon = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            refreshBtn.disabled = true;
             
-            // Show success notification
-            this.showNotification('Analytics refreshed successfully!', 'success');
-        }).catch(() => {
-            // Restore button state on error
-            refreshBtn.innerHTML = originalContent;
-            refreshBtn.disabled = false;
-            this.showNotification('Failed to refresh analytics', 'error');
-        });
+            // Fetch fresh analytics data
+            fetch('/api/analytics')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Analytics data received:', data);
+                    this.updateEnhancedAnalyticsDisplay(data);
+                    
+                    // Re-enable refresh button
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = originalIcon;
+                        refreshBtn.disabled = false;
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error refreshing analytics:', error);
+                    refreshBtn.innerHTML = originalIcon;
+                    refreshBtn.disabled = false;
+                });
+        }
+    }
+
+    closeAnalyticsPanel() {
+        const panel = this.analyticsPanel;
+        const closeBtn = document.getElementById('closeAnalyticsPanel');
+        const expandBtn = document.getElementById('expandAnalytics');
+        
+        if (panel.classList.contains('expanded')) {
+            panel.classList.remove('expanded');
+            document.body.style.overflow = 'auto';
+            
+            // Hide close button, show expand button
+            if (closeBtn) closeBtn.style.display = 'none';
+            if (expandBtn) expandBtn.style.display = 'inline-block';
+            
+            // Ensure proper scrolling in collapsed state
+            const metricsContainer = panel.querySelector('.metrics-container');
+            if (metricsContainer) {
+                metricsContainer.style.overflowY = 'scroll';
+                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
+                metricsContainer.style.height = 'calc(100vh - 90px)';
+                // Force scrollbar to be visible
+                metricsContainer.style.overflowY = 'scroll';
+            }
+        }
+    }
+
+    // Initialize scrolling for metrics container
+    initializeMetricsScrolling() {
+        const metricsContainer = this.analyticsPanel?.querySelector('.metrics-container');
+        if (metricsContainer) {
+            // Force scrolling to work with new compact layout
+            metricsContainer.style.overflowY = 'scroll';
+            metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
+            metricsContainer.style.height = 'calc(100vh - 90px)';
+            
+            // Add scroll event listener for debugging
+            metricsContainer.addEventListener('scroll', (e) => {
+                console.log('Scrolling metrics container:', e.target.scrollTop);
+            });
+            
+            // Ensure scrollbar is visible
+            metricsContainer.style.overflowY = 'scroll';
+            
+            console.log('Metrics scrolling initialized with compact layout');
+        }
     }
 }
 
