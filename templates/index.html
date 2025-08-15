@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Customer Support Chatbot - Professional Support Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Professional AI-powered customer support chatbot with advanced NLP, sentiment analysis, and real-time assistance">
+    <meta name="keywords" content="AI chatbot, customer support, NLP, sentiment analysis, technical support, billing help">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>AI Support Assistant</h1>
+                    <span class="version-badge">v2.0</span>
+                </div>
+                <div class="header-controls">
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span class="status-text">Online</span>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <!-- Welcome Message -->
+            <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h2>Welcome to AI Customer Support</h2>
+                    <p>I'm here to help you with any questions or issues. How can I assist you today?</p>
+                    
+                    <!-- Enhanced Quick Actions -->
+                    <div class="quick-actions">
+                        <div class="quick-action-category">
+                            <h3>Technical Support</h3>
+                            <button class="quick-action-btn primary" onclick="sendQuickMessage('I need technical support')">
+                                <i class="fas fa-tools"></i>
+                                Technical Issues
+                            </button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('My app is not working properly')">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                App Problems
+                            </button>
+                        </div>
+                        
+                        <div class="quick-action-category">
+                            <h3>Account & Billing</h3>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('I have a billing question')">
+                                <i class="fas fa-credit-card"></i>
+                                Billing Question
+                            </button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('I need help with my account')">
+                                <i class="fas fa-user-circle"></i>
+                                Account Help
+                            </button>
+                        </div>
+                        
+                        <div class="quick-action-category">
+                            <h3>Product Information</h3>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('Tell me about your products')">
+                                <i class="fas fa-info-circle"></i>
+                                Product Info
+                            </button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('What features do you offer?')">
+                                <i class="fas fa-star"></i>
+                                Features
+                            </button>
+                        </div>
+                        
+                        <div class="quick-action-category">
+                            <h3>Feedback & Support</h3>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('I want to provide feedback')">
+                                <i class="fas fa-comment-dots"></i>
+                                Feedback
+                            </button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('I need to speak with a human')">
+                                <i class="fas fa-user-tie"></i>
+                                Human Support
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Capabilities Showcase -->
+                    <div class="ai-capabilities">
+                        <h3>AI-Powered Features</h3>
+                        <div class="capability-grid">
+                            <div class="capability-item">
+                                <i class="fas fa-brain"></i>
+                                <span>Smart Intent Recognition</span>
+                            </div>
+                            <div class="capability-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Sentiment Analysis</span>
+                            </div>
+                            <div class="capability-item">
+                                <i class="fas fa-search"></i>
+                                <span>Entity Extraction</span>
+                            </div>
+                            <div class="capability-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Real-time Responses</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages" style="display: none;">
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+                
+                <!-- Enhanced Typing Indicator -->
+                <div class="typing-indicator-full" id="typingIndicatorFull" style="display: none;">
+                    <div class="typing-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-content">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p>AI is thinking...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Chat Input -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <div class="input-controls">
+                        <button class="input-btn" id="emojiBtn" aria-label="Add emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <button class="input-btn" id="attachmentBtn" aria-label="Attach file">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                    </div>
+                    
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Type your message here... (Press Enter to send)"
+                        maxlength="500"
+                        autocomplete="off"
+                        aria-label="Type your message"
+                    >
+                    
+                    <button id="sendButton" class="send-button" onclick="sendMessage()" aria-label="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="input-footer">
+                    <div class="input-stats">
+                        <span class="char-count" id="charCount">0/500</span>
+                        <span class="typing-indicator" id="typingIndicator" style="display: none;">
+                            <i class="fas fa-circle"></i>
+                            <i class="fas fa-circle"></i>
+                            <i class="fas fa-circle"></i>
+                        </span>
+                    </div>
+                    
+                    <!-- Smart Suggestions -->
+                    <div class="smart-suggestions" id="smartSuggestions" style="display: none;">
+                        <span class="suggestions-label">Suggestions:</span>
+                        <div class="suggestion-chips" id="suggestionChips">
+                            <!-- Suggestions will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Enhanced Analytics Panel -->
+        <aside class="analytics-panel" id="analyticsPanel">
+            <div class="panel-header">
+                <h3><i class="fas fa-chart-line"></i> Performance Metrics</h3>
+                <div class="panel-controls">
+                    <button class="refresh-btn" onclick="refreshAnalytics()" aria-label="Refresh analytics">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="expand-btn" id="expandAnalytics" aria-label="Expand analytics">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="metrics-container">
+                <!-- Core Metrics -->
+                <div class="metric-card primary">
+                    <div class="metric-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Total Queries</h4>
+                        <p id="totalQueries">-</p>
+                        <span class="metric-trend positive">+12% today</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Avg Response Time</h4>
+                        <p id="avgResponseTime">-</p>
+                        <span class="metric-trend negative">-5% this week</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Performance Gain</h4>
+                        <p id="performanceGain">-</p>
+                        <span class="metric-trend positive">Target: 40%</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Uptime</h4>
+                        <p id="uptime">-</p>
+                        <span class="metric-trend positive">99.9%</span>
+                    </div>
+                </div>
+                
+                <!-- Sentiment Analysis -->
+                <div class="metric-card sentiment-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Customer Sentiment</h4>
+                        <div class="sentiment-chart" id="sentimentChart">
+                            <div class="sentiment-bar positive" style="width: 65%"></div>
+                            <div class="sentiment-bar neutral" style="width: 25%"></div>
+                            <div class="sentiment-bar negative" style="width: 10%"></div>
+                        </div>
+                        <div class="sentiment-labels">
+                            <span>Positive: 65%</span>
+                            <span>Neutral: 25%</span>
+                            <span>Negative: 10%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intent Distribution -->
+                <div class="metric-card intent-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h4>Query Intent Distribution</h4>
+                        <div class="intent-chart" id="intentChart">
+                            <!-- Intent distribution will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Settings</h3>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="themeSelect">Theme:</label>
+                    <select id="themeSelect">
+                        <option value="auto">Auto (System)</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="fontSizeSelect">Font Size:</label>
+                    <select id="fontSizeSelect">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="notificationsToggle">Notifications:</label>
+                    <input type="checkbox" id="notificationsToggle" checked>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="accessibilityMode">Accessibility Mode:</label>
+                    <input type="checkbox" id="accessibilityMode">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>
