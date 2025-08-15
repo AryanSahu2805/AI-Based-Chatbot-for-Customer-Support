@@ -149,12 +149,12 @@ html {
     height: 100%;
 }
 
-/* Header - Minimal height to eliminate white space */
+/* Header - Thicker, more prominent header bar */
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
-    padding: var(--spacing-sm) var(--spacing-md); /* Reduced padding */
-    height: 40px; /* Reduced height to minimize white space */
+    padding: var(--spacing-md) var(--spacing-lg); /* Increased padding for thickness */
+    height: 60px; /* Increased from 40px to 60px for thicker header */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -164,7 +164,8 @@ html {
     right: 0;
     z-index: 100;
     box-shadow: var(--shadow-md);
-    margin-top: 0; /* Removed margin */
+    margin-top: 0;
+    border-bottom: 3px solid var(--primary-color); /* Added bottom border for extra thickness */
 }
 
 .header::before {
@@ -311,24 +312,24 @@ html {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     margin: 0; /* Removed margin for tighter layout */
-    height: calc(100vh - 50px); /* Adjusted for new header height */
-    max-height: calc(100vh - 50px);
+    height: calc(100vh - 60px); /* Adjusted for new header height */
+    max-height: calc(100vh - 60px);
     position: relative;
     border: 1px solid var(--border-color);
     box-sizing: border-box;
 }
 
-/* Container - Eliminate excessive white space and ensure perfect fit */
+/* Container - Adjusted for thicker header */
 .container {
     display: grid;
     grid-template-columns: 1fr 480px;
-    grid-template-rows: 50px 1fr; /* Reduced header height to 50px */
+    grid-template-rows: 60px 1fr; /* Adjusted for new header height */
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    padding-top: 42px; /* Drastically reduced from 52px to 42px to eliminate white space */
-    gap: var(--spacing-sm); /* Reduced gap for tighter layout */
+    padding-top: 62px; /* Adjusted from 42px to 62px for thicker header */
+    gap: var(--spacing-sm);
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -914,8 +915,8 @@ html {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 50px); /* Adjusted for new header height */
-    max-height: calc(100vh - 50px);
+    height: calc(100vh - 60px); /* Adjusted for new header height */
+    max-height: calc(100vh - 60px);
     border: 2px solid var(--primary-color);
     position: relative;
     width: 100%;
@@ -1008,8 +1009,8 @@ html {
     border-top: 1px solid var(--border-color);
     width: 100%;
     box-sizing: border-box;
-    height: calc(100vh - 90px); /* Adjusted for new header height */
-    max-height: calc(100vh - 90px);
+    height: calc(100vh - 100px); /* Adjusted for new header height */
+    max-height: calc(100vh - 100px);
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) var(--border-color);
 }

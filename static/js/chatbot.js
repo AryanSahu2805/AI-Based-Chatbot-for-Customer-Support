@@ -1030,8 +1030,8 @@ class EnhancedChatbotUI {
             const metricsContainer = panel.querySelector('.metrics-container');
             if (metricsContainer) {
                 metricsContainer.style.overflowY = 'scroll';
-                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
-                metricsContainer.style.height = 'calc(100vh - 90px)';
+                metricsContainer.style.maxHeight = 'calc(100vh - 100px)';
+                metricsContainer.style.height = 'calc(100vh - 100px)';
                 // Force scrollbar to be visible
                 metricsContainer.style.overflowY = 'scroll';
             }
@@ -1048,8 +1048,8 @@ class EnhancedChatbotUI {
             const metricsContainer = panel.querySelector('.metrics-container');
             if (metricsContainer) {
                 metricsContainer.style.overflowY = 'scroll';
-                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
-                metricsContainer.style.height = 'calc(100vh - 90px)';
+                metricsContainer.style.maxHeight = 'calc(100vh - 100px)';
+                metricsContainer.style.height = 'calc(100vh - 100px)';
                 // Force scrollbar to be visible
                 metricsContainer.style.overflowY = 'scroll';
             }
@@ -1104,8 +1104,8 @@ class EnhancedChatbotUI {
             const metricsContainer = panel.querySelector('.metrics-container');
             if (metricsContainer) {
                 metricsContainer.style.overflowY = 'scroll';
-                metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
-                metricsContainer.style.height = 'calc(100vh - 90px)';
+                metricsContainer.style.maxHeight = 'calc(100vh - 100px)';
+                metricsContainer.style.height = 'calc(100vh - 100px)';
                 // Force scrollbar to be visible
                 metricsContainer.style.overflowY = 'scroll';
             }
@@ -1118,8 +1118,8 @@ class EnhancedChatbotUI {
         if (metricsContainer) {
             // Force scrolling to work with new compact layout
             metricsContainer.style.overflowY = 'scroll';
-            metricsContainer.style.maxHeight = 'calc(100vh - 90px)';
-            metricsContainer.style.height = 'calc(100vh - 90px)';
+            metricsContainer.style.maxHeight = 'calc(100vh - 100px)';
+            metricsContainer.style.height = 'calc(100vh - 100px)';
             
             // Add scroll event listener for debugging
             metricsContainer.addEventListener('scroll', (e) => {
@@ -1129,7 +1129,7 @@ class EnhancedChatbotUI {
             // Ensure scrollbar is visible
             metricsContainer.style.overflowY = 'scroll';
             
-            console.log('Metrics scrolling initialized with compact layout');
+            console.log('Metrics scrolling initialized with thicker header layout');
         }
     }
 }
