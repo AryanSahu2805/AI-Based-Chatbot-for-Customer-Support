@@ -130,6 +130,25 @@ body {
     background: var(--background-color); /* Match container background */
 }
 
+/* Ensure proper body scrolling and prevent gaps */
+body {
+    overflow-x: hidden;
+    padding-top: 0;
+    margin-top: 0;
+    background: var(--background-color);
+    min-height: 100vh;
+}
+
+/* Ensure proper html scrolling */
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    margin-top: 0;
+    padding-top: 0;
+    background: var(--background-color);
+    height: 100%;
+}
+
 /* Header - Fixed positioning with proper z-index */
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -297,18 +316,18 @@ body {
     border: 1px solid var(--border-color); /* Add border for visibility */
 }
 
-/* Container - Proper grid layout with centered Performance Metrics */
+/* Container - Proper grid layout with fully visible Performance Metrics */
 .container {
     display: grid;
-    grid-template-columns: 1fr 420px; /* Increased right column width for better visibility */
+    grid-template-columns: 1fr 450px; /* Increased right column width for full visibility */
     grid-template-rows: 80px 1fr;
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
     padding-top: 82px;
-    gap: var(--spacing-md); /* Add proper spacing between columns */
-    overflow: visible; /* Allow content to be visible */
+    gap: var(--spacing-lg); /* Increased gap for better separation */
+    overflow: visible;
 }
 
 /* Enhanced Welcome Section - Better Organization */
@@ -890,6 +909,7 @@ body {
     width: 100%; /* Ensure full width */
     box-sizing: border-box;
     margin: 0; /* Remove margins that cause misalignment */
+    max-height: calc(100vh - 120px); /* Ensure proper height constraint */
 }
 
 /* Panel header - Ensure proper visibility and full width */
@@ -908,6 +928,7 @@ body {
     min-height: 60px;
     width: 100%;
     box-sizing: border-box;
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .panel-header h3 {
@@ -974,6 +995,7 @@ body {
     width: 100%;
     box-sizing: border-box;
     max-height: calc(100vh - 200px); /* Ensure proper height calculation */
+    height: auto; /* Allow natural height */
 }
 
 /* Ensure metric cards are visible and properly positioned */
@@ -1897,8 +1919,8 @@ button:focus {
 /* Responsive Enhancements */
 @media (max-width: 1400px) {
     .container {
-        grid-template-columns: 1fr 350px;
-        margin: var(--spacing-md);
+        grid-template-columns: 1fr 400px;
+        gap: var(--spacing-md);
     }
     
     .quick-actions {
@@ -1908,8 +1930,8 @@ button:focus {
 
 @media (max-width: 1200px) {
     .container {
-        grid-template-columns: 1fr 320px;
-        margin: var(--spacing-md);
+        grid-template-columns: 1fr 380px;
+        gap: var(--spacing-sm);
     }
     
     .quick-actions {
@@ -1928,10 +1950,13 @@ button:focus {
     .analytics-panel {
         grid-column: 1;
         grid-row: 3;
-        border-left: none;
-        border-top: 1px solid var(--border-color);
-        max-height: 300px;
-        overflow-y: auto;
+        height: auto;
+        max-height: 600px;
+    }
+    
+    .chat-container {
+        grid-column: 1;
+        grid-row: 2;
     }
     
     .quick-actions {
