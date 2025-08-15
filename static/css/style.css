@@ -319,17 +319,17 @@ html {
     box-sizing: border-box;
 }
 
-/* Container - Adjusted for thicker header */
+/* Container - Minimized white space for compact layout */
 .container {
     display: grid;
     grid-template-columns: 1fr 480px;
-    grid-template-rows: 60px 1fr; /* Adjusted for new header height */
+    grid-template-rows: 60px 1fr; /* Keep header height */
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    padding-top: 62px; /* Adjusted from 42px to 62px for thicker header */
-    gap: var(--spacing-sm);
+    padding-top: 50px; /* Further reduced to minimize white space */
+    gap: 0; /* Remove gap completely for tight layout */
     overflow: hidden;
     box-sizing: border-box;
 }
