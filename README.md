@@ -97,213 +97,205 @@ The chatbot will be available at `http://localhost:5000`
 
 ## 🏗️ Architecture
 
-### System Components
+The chatbot follows a modular, scalable architecture:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend UI   │    │   Flask API     │    │   AI Engine     │
-│                 │◄──►│                 │◄──►│                 │
-│ - Chat Interface│    │ - Rate Limiting │    │ - OpenAI API    │
-│ - Analytics     │    │ - Request       │    │ - TensorFlow    │
-│ - Responsive    │    │   Validation    │    │ - Intent        │
-└─────────────────┘    └─────────────────┘    │   Classification│
-                                              └─────────────────┘
+│   Frontend      │    │   API Layer     │    │   AI Engine     │
+│   (HTML/CSS/JS) │◄──►│   (Flask)       │◄──►│   (OpenAI/NLP)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Analytics     │    │   Rate Limiting │    │   Health Check  │
+│   Dashboard     │    │   & Security    │    │   & Monitoring  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### Data Flow
+## 🔌 API Endpoints
 
-1. **User Input**: User types message in chat interface
-2. **Intent Classification**: TensorFlow model classifies query intent
-3. **Context Preparation**: Conversation history is formatted for AI
-4. **AI Generation**: OpenAI API generates contextual response
-5. **Response Processing**: Response is formatted and displayed
-6. **Analytics Update**: Performance metrics are updated in real-time
+### Chat Endpoints
+- `POST /api/chat` - Send a message and get AI response
+- `GET /api/conversations` - Retrieve conversation history
+- `GET /api/session/<session_id>` - Get specific session data
 
-## 📊 API Endpoints
+### Analytics Endpoints
+- `GET /api/analytics` - Get performance metrics and statistics
+- `GET /api/health` - System health check and status
 
-### Chat Endpoint
-```http
-POST /api/chat
-Content-Type: application/json
+### Utility Endpoints
+- `GET /` - Main chatbot interface
+- `GET /static/*` - Static assets (CSS, JS, images)
 
-{
-  "message": "I need technical support",
-  "context": []
-}
-```
+## 💡 Use Cases
 
-### Analytics Endpoint
-```http
-GET /api/analytics
-```
-
-### Health Check
-```http
-GET /api/health
-```
-
-### Conversations (Admin)
-```http
-GET /api/conversations?limit=50
-```
-
-## 🎯 Use Cases
-
-### Customer Support Scenarios
-- **Technical Issues**: Bug reports, error troubleshooting, feature requests
+### Customer Support
+- **Technical Issues**: App crashes, login problems, feature bugs
 - **Billing Questions**: Payment issues, subscription management, refunds
-- **Product Information**: Features, specifications, pricing, comparisons
-- **General Inquiries**: Company information, contact details, policies
-- **Feedback Collection**: User suggestions, satisfaction surveys, improvement ideas
+- **Product Information**: Feature explanations, pricing, comparisons
+- **Account Management**: Password resets, profile updates, account deletion
 
-### Industry Applications
-- **E-commerce**: Product support, order tracking, returns
-- **SaaS Platforms**: User onboarding, feature guidance, troubleshooting
-- **Financial Services**: Account queries, transaction support, policy questions
-- **Healthcare**: Appointment scheduling, general information, FAQs
+### Business Applications
+- **E-commerce**: Order tracking, return processing, product queries
+- **SaaS Platforms**: Feature support, billing assistance, onboarding
+- **Healthcare**: Appointment scheduling, insurance questions, general info
 - **Education**: Course information, technical support, enrollment help
 
-## 🔧 Customization
+## 🎨 Customization
 
-### Adding New Intents
+### UI/UX Customization
+- Modify `static/css/style.css` for visual changes
+- Update `templates/index.html` for layout modifications
+- Customize `static/js/chatbot.js` for behavior changes
 
-1. **Update Intent Classifier**:
-```python
-def classify_intent(self, text: str) -> str:
-    # Add your custom intent logic here
-    if "custom_keyword" in text.lower():
-        return "custom_intent"
-    # ... existing logic
-```
+### AI Behavior Customization
+- Adjust `app.py` for response logic modifications
+- Modify intent classification in the `classify_intent` method
+- Customize fallback responses in `_generate_fallback_response`
 
-2. **Add Fallback Responses**:
-```python
-def _generate_fallback_response(self, intent: str, message: str) -> str:
-    fallback_responses = {
-        # ... existing responses
-        "custom_intent": "Your custom response here"
-    }
-```
-
-### Styling Customization
-
-The chatbot uses CSS custom properties for easy theming:
-
-```css
-:root {
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  --accent-color: #ffd700;
-  --text-color: #1e293b;
-  --background-color: #f8fafc;
-}
-```
+### Deployment Customization
+- Update `Dockerfile` for container modifications
+- Modify `docker-compose.yml` for multi-service deployment
+- Adjust `requirements.txt` for dependency changes
 
 ## 🚀 Deployment
 
-### Production Deployment
-
-1. **Environment Setup**:
+### Local Development
 ```bash
-export FLASK_ENV=production
-export FLASK_DEBUG=False
+python app.py
 ```
 
-2. **Using Gunicorn**:
+### Production with Gunicorn
 ```bash
 gunicorn -w 4 -b 0.0.0.0:5000 app:app
 ```
 
-3. **Docker Deployment**:
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 5000
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+### Docker Deployment
+```bash
+docker build -t ai-chatbot .
+docker run -p 5000:5000 ai-chatbot
 ```
 
-### Scaling Considerations
+### Docker Compose
+```bash
+docker-compose up -d
+```
 
-- **Load Balancing**: Use Nginx or HAProxy for multiple instances
-- **Database**: Consider PostgreSQL or MongoDB for high-traffic scenarios
-- **Caching**: Implement Redis for session management and response caching
-- **Monitoring**: Add Prometheus/Grafana for production monitoring
+## 📊 Performance Optimization
 
-## 📈 Performance Optimization
+### Response Time Optimization
+- Implemented caching for common queries
+- Optimized NLP processing pipeline
+- Efficient intent classification algorithms
 
-### Response Time Improvements
+### Scalability Features
+- Stateless design for horizontal scaling
+- Rate limiting to prevent abuse
+- Connection pooling for database operations
 
-1. **Model Optimization**: Use TensorFlow Lite for faster inference
-2. **Caching**: Cache common responses and intent classifications
-3. **Async Processing**: Implement background tasks for heavy operations
-4. **CDN**: Use CDN for static assets in production
-
-### Memory Management
-
-- Conversation history is limited to last 1000 messages
-- TensorFlow models are loaded once and reused
-- Automatic cleanup of old analytics data
+### Monitoring & Alerting
+- Real-time performance metrics
+- Automated health checks
+- Performance trend analysis
 
 ## 🧪 Testing
 
-### Running Tests
+### Automated Testing
 ```bash
-# Install test dependencies
-pip install pytest pytest-cov
-
-# Run tests with coverage
-pytest --cov=app tests/
+python -m pytest test_chatbot.py
 ```
 
-### Test Coverage
-- Unit tests for core functions
-- Integration tests for API endpoints
-- Frontend JavaScript testing
-- Performance benchmarking
+### Manual Testing
+- Test various user scenarios
+- Verify intent classification accuracy
+- Check response quality and relevance
+
+### Load Testing
+- Simulate high traffic scenarios
+- Monitor response times under load
+- Test rate limiting effectiveness
 
 ## 🔒 Security Features
 
-- **Rate Limiting**: Prevents API abuse
-- **Input Validation**: Sanitizes user inputs
-- **CORS Protection**: Configurable cross-origin policies
-- **Environment Variables**: Secure configuration management
-- **HTTPS Ready**: Production-ready SSL configuration
+### Input Validation
+- Sanitize user inputs to prevent XSS
+- Validate message length and content
+- Rate limiting to prevent abuse
+
+### API Security
+- CORS protection for cross-origin requests
+- Request validation and sanitization
+- Secure environment variable handling
+
+### Data Protection
+- No sensitive data logging
+- Secure session management
+- GDPR-compliant data handling
 
 ## 📚 API Documentation
 
-### Request Format
-All API requests should include:
-- `Content-Type: application/json`
-- Valid JSON payload
-- Rate limit compliance
+### Chat Request Format
+```json
+{
+  "message": "User's message here",
+  "session_id": "optional_session_id"
+}
+```
 
-### Response Format
+### Chat Response Format
 ```json
 {
   "response": "AI generated response",
   "intent": "detected_intent",
-  "response_time": 0.234,
-  "query_id": 123,
-  "timestamp": "2024-01-01T12:00:00Z"
+  "sentiment": "positive/negative/neutral",
+  "entities": [{"type": "entity_type", "text": "entity_text"}],
+  "response_time": 0.123,
+  "query_id": 1,
+  "timestamp": "2025-08-14T21:00:00Z",
+  "suggestions": ["suggestion1", "suggestion2"]
+}
+```
+
+### Analytics Response Format
+```json
+{
+  "total_queries": 150,
+  "avg_response_time": 0.15,
+  "uptime": "99.9%",
+  "sentiment_distribution": {
+    "positive": 65,
+    "neutral": 25,
+    "negative": 10
+  },
+  "intent_distribution": {
+    "technical_support": 40,
+    "billing": 30,
+    "product_info": 20,
+    "general_inquiry": 10
+  }
 }
 ```
 
 ## 🤝 Contributing
 
+### Development Setup
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Add tests for new functionality
 5. Submit a pull request
 
-### Development Guidelines
-- Follow PEP 8 Python style guide
-- Use meaningful commit messages
-- Update documentation for new features
-- Ensure all tests pass
+### Code Style
+- Follow PEP 8 Python style guidelines
+- Use meaningful variable and function names
+- Add docstrings for all functions
+- Include type hints where appropriate
+
+### Testing Requirements
+- All new features must include tests
+- Maintain test coverage above 80%
+- Run tests before submitting PRs
 
 ## 📄 License
 
@@ -312,50 +304,54 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 ### Getting Help
-- **Documentation**: Check this README and inline code comments
-- **Issues**: Report bugs via GitHub Issues
-- **Discussions**: Use GitHub Discussions for questions
+- Check the [Issues](https://github.com/yourusername/ai-customer-support-chatbot/issues) page
+- Review the documentation above
+- Contact the development team
 
-### Common Issues
+### Reporting Bugs
+- Use the GitHub Issues feature
+- Include detailed error messages
+- Provide steps to reproduce the issue
 
-1. **OpenAI API Errors**: Check API key and credit balance
-2. **TensorFlow Issues**: Ensure compatible Python version
-3. **Performance Problems**: Monitor memory usage and response times
-4. **Deployment Issues**: Verify environment variables and dependencies
+### Feature Requests
+- Submit feature requests via GitHub Issues
+- Describe the use case and expected behavior
+- Include mockups or examples if possible
 
-## 🔮 Roadmap
+## 🗺️ Roadmap
 
-### Upcoming Features
+### Short Term (1-3 months)
 - [ ] Multi-language support
-- [ ] Voice chat integration
+- [ ] Enhanced sentiment analysis
+- [ ] Integration with popular CRM systems
+- [ ] Mobile app development
+
+### Medium Term (3-6 months)
 - [ ] Advanced analytics dashboard
-- [ ] Custom model training
-- [ ] Integration with CRM systems
-- [ ] Sentiment analysis
-- [ ] Automated escalation to human agents
+- [ ] Machine learning model training
+- [ ] Voice chat capabilities
+- [ ] Multi-tenant architecture
 
-### Performance Goals
-- [ ] Sub-100ms response times
-- [ ] 99.99% uptime
-- [ ] Support for 10,000+ concurrent users
-- [ ] Real-time model updates
+### Long Term (6+ months)
+- [ ] AI-powered predictive support
+- [ ] Integration with IoT devices
+- [ ] Advanced natural language understanding
+- [ ] Enterprise-grade security features
 
-## 📊 Metrics & Monitoring
+## 📈 Metrics & Monitoring
 
-### Key Performance Indicators
-- **Response Time**: Target < 200ms
-- **Uptime**: Target 99.9%
-- **Query Volume**: 1,000+ monthly
-- **User Satisfaction**: Measured through feedback
+### Key Performance Indicators (KPIs)
+- **Response Time**: Target < 2 seconds
+- **Accuracy**: Target > 90% intent classification
+- **Uptime**: Target > 99.9%
+- **Customer Satisfaction**: Target > 4.5/5
 
 ### Monitoring Tools
-- Built-in health checks
-- Real-time performance metrics
-- Error logging and alerting
-- Usage analytics dashboard
+- Built-in Flask monitoring
+- Custom analytics dashboard
+- Performance trend analysis
+- Real-time alerting system
 
 ---
 
-**Built with ❤️ using Python, OpenAI, and TensorFlow**
-
-*For questions and support, please open an issue or discussion on GitHub.*
+**Built with ❤️ for modern customer support solutions**
