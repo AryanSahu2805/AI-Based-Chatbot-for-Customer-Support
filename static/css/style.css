@@ -110,6 +110,8 @@ html {
     scroll-behavior: smooth;
     height: 100%;
     overflow-x: hidden;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 body {
@@ -123,6 +125,7 @@ body {
     overflow: hidden; /* Prevent body scroll */
     overflow-x: hidden;
     padding-top: 0; /* Remove any body padding */
+    margin-top: 0;
 }
 
 /* Header - Fixed positioning with proper z-index */
@@ -140,6 +143,7 @@ body {
     right: 0;
     z-index: 100;
     box-shadow: var(--shadow-md);
+    margin-top: 2px; /* Add small top margin to prevent cropping */
 }
 
 .header::before {
@@ -287,6 +291,18 @@ body {
     box-shadow: var(--shadow-sm);
     margin: var(--spacing-md);
     height: calc(100vh - 120px); /* Account for header and margins */
+}
+
+/* Container - Add top padding to account for fixed header */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: 80px 1fr;
+    height: 100vh;
+    max-width: 1800px;
+    margin: 0 auto;
+    position: relative;
+    padding-top: 82px; /* Increased padding to account for header margin */
 }
 
 /* Enhanced Welcome Section - Better Organization */
@@ -864,9 +880,10 @@ body {
     flex-direction: column;
     min-height: 0;
     height: calc(100vh - 120px); /* Account for header and margins */
+    border: 1px solid var(--border-color); /* Add border for better visibility */
 }
 
-/* Panel header - Ensure proper visibility */
+/* Panel header - Ensure proper visibility and styling */
 .panel-header {
     background: var(--primary-color);
     color: white;
@@ -874,48 +891,57 @@ body {
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
-    background: var(--primary-color);
     z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* Round top corners */
 }
 
 .panel-header h3 {
+    color: white;
+    margin: 0;
     font-size: var(--font-size-lg);
     font-weight: 600;
-    color: var(--text-color);
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
 }
 
-.panel-header i {
-    color: var(--primary-color);
+.panel-header h3 i {
+    font-size: var(--font-size-xl);
 }
 
+/* Panel controls - Ensure proper button styling */
 .panel-controls {
     display: flex;
     gap: var(--spacing-sm);
+    align-items: center;
 }
 
-.refresh-btn,
-.expand-btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
+.panel-controls button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
     padding: var(--spacing-sm);
     border-radius: var(--radius-md);
+    cursor: pointer;
     transition: all var(--transition-normal);
-    opacity: 0.7;
+    font-size: var(--font-size-sm);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.refresh-btn:hover,
-.expand-btn:hover {
-    background: var(--border-color);
-    opacity: 1;
-    transform: scale(1.1);
+.panel-controls button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.panel-controls button i {
+    font-size: var(--font-size-sm);
 }
 
 /* Metrics container - Ensure proper scrolling and content visibility */
@@ -927,6 +953,31 @@ body {
     overflow-y: auto;
     flex: 1;
     min-height: 0;
+    background: var(--background-color); /* Add background for better contrast */
+}
+
+/* Ensure metric cards are visible */
+.metrics-container:empty::after {
+    content: "Loading metrics...";
+    display: block;
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Debug: Add outline to see panel boundaries */
+.analytics-panel::before {
+    content: "Analytics Panel";
+    position: absolute;
+    top: -20px;
+    left: 10px;
+    background: var(--primary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    z-index: 101;
 }
 
 /* Metric cards - Ensure proper content display */
