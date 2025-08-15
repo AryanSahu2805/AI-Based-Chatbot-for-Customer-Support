@@ -297,18 +297,18 @@ body {
     border: 1px solid var(--border-color); /* Add border for visibility */
 }
 
-/* Container - Proper grid layout with full visibility */
+/* Container - Proper grid layout with centered Performance Metrics */
 .container {
     display: grid;
-    grid-template-columns: 1fr 400px; /* Increased right column width */
+    grid-template-columns: 1fr 420px; /* Increased right column width for better visibility */
     grid-template-rows: 80px 1fr;
     height: 100vh;
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    padding-top: 82px; /* Account for header margin */
-    gap: 0; /* Remove gaps between grid items */
-    overflow: hidden; /* Prevent container overflow */
+    padding-top: 82px;
+    gap: var(--spacing-md); /* Add proper spacing between columns */
+    overflow: visible; /* Allow content to be visible */
 }
 
 /* Enhanced Welcome Section - Better Organization */
@@ -880,17 +880,16 @@ body {
     grid-row: 2;
     background: var(--surface-color);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    margin: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 0;
-    height: calc(100vh - 120px); /* Account for header and margins */
+    height: calc(100vh - 120px);
     border: 2px solid var(--primary-color);
     position: relative;
-    right: 0; /* Ensure right edge is visible */
-    width: calc(100% - var(--spacing-md) * 2); /* Account for margins */
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box;
+    margin: 0; /* Remove margins that cause misalignment */
 }
 
 /* Panel header - Ensure proper visibility and full width */
@@ -907,8 +906,8 @@ body {
     align-items: center;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     min-height: 60px;
-    width: 100%; /* Ensure full width */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .panel-header h3 {
@@ -931,7 +930,7 @@ body {
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
 }
 
 .panel-controls button {
@@ -948,7 +947,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; /* Prevent button shrinking */
+    flex-shrink: 0;
 }
 
 .panel-controls button:hover {
@@ -972,8 +971,9 @@ body {
     min-height: 0;
     background: var(--background-color);
     border-top: 1px solid var(--border-color);
-    width: 100%; /* Ensure full width */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%;
+    box-sizing: border-box;
+    max-height: calc(100vh - 200px); /* Ensure proper height calculation */
 }
 
 /* Ensure metric cards are visible and properly positioned */
@@ -1023,12 +1023,13 @@ body {
     transition: all var(--transition-normal);
     position: relative;
     overflow: visible;
-    min-height: 120px;
+    min-height: 140px; /* Increased height for better content display */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 100%; /* Ensure full width */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word; /* Prevent text overflow */
 }
 
 .metric-card:hover {
@@ -1043,7 +1044,7 @@ body {
     align-items: flex-start;
     gap: var(--spacing-md);
     height: 100%;
-    width: 100%; /* Ensure full width */
+    width: 100%;
 }
 
 .metric-icon {
@@ -1056,7 +1057,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-lg);
-    flex-shrink: 0; /* Prevent icon shrinking */
+    flex-shrink: 0;
 }
 
 .metric-info {
@@ -1065,7 +1066,8 @@ body {
     flex-direction: column;
     justify-content: space-between;
     min-height: 0;
-    width: calc(100% - 48px - var(--spacing-md)); /* Account for icon and gap */
+    width: calc(100% - 48px - var(--spacing-md));
+    overflow: hidden; /* Prevent content overflow */
 }
 
 /* Metric card content - Ensure proper visibility and positioning */
@@ -1076,7 +1078,8 @@ body {
     margin: var(--spacing-sm) 0;
     line-height: 1.2;
     display: block;
-    word-break: break-word; /* Prevent text overflow */
+    word-break: break-word;
+    overflow-wrap: break-word; /* Additional text wrapping */
 }
 
 .metric-card .metric-label {
@@ -1086,14 +1089,16 @@ body {
     margin-bottom: var(--spacing-sm);
     font-weight: 500;
     display: block;
-    word-break: break-word; /* Prevent text overflow */
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .metric-card .metric-trend {
     font-size: var(--font-size-sm);
     font-weight: 500;
     display: block;
-    word-break: break-word; /* Prevent text overflow */
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .metric-trend.positive {
