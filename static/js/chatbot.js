@@ -39,6 +39,10 @@ class EnhancedChatbotUI {
         this.smartSuggestions = document.getElementById('smartSuggestions');
         this.suggestionChips = document.getElementById('suggestionChips');
         
+        // Input control elements
+        this.emojiBtn = document.getElementById('emojiBtn');
+        this.attachmentBtn = document.getElementById('attachmentBtn');
+        
         // Analytics elements
         this.totalQueries = document.getElementById('totalQueries');
         this.avgResponseTime = document.getElementById('avgResponseTime');
@@ -52,6 +56,10 @@ class EnhancedChatbotUI {
         this.fontSizeSelect = document.getElementById('fontSizeSelect');
         this.notificationsToggle = document.getElementById('notificationsToggle');
         this.accessibilityMode = document.getElementById('accessibilityMode');
+        
+        // Analytics panel controls
+        this.refreshBtn = document.querySelector('.refresh-btn');
+        this.expandAnalyticsBtn = document.getElementById('expandAnalytics');
     }
     
     bindEvents() {
@@ -73,6 +81,16 @@ class EnhancedChatbotUI {
             this.sendMessage();
         });
         
+        // Emoji button functionality
+        this.emojiBtn.addEventListener('click', () => {
+            this.showEmojiPicker();
+        });
+        
+        // Attachment button functionality
+        this.attachmentBtn.addEventListener('click', () => {
+            this.showFileUpload();
+        });
+        
         // Theme toggle
         this.themeToggle.addEventListener('click', () => {
             this.toggleTheme();
@@ -82,6 +100,19 @@ class EnhancedChatbotUI {
         this.settingsBtn.addEventListener('click', () => {
             this.openSettings();
         });
+        
+        // Analytics panel controls
+        if (this.refreshBtn) {
+            this.refreshBtn.addEventListener('click', () => {
+                this.refreshAnalytics();
+            });
+        }
+        
+        if (this.expandAnalyticsBtn) {
+            this.expandAnalyticsBtn.addEventListener('click', () => {
+                this.toggleAnalyticsPanel();
+            });
+        }
         
         // Settings changes
         this.themeSelect.addEventListener('change', (e) => {
@@ -261,9 +292,12 @@ class EnhancedChatbotUI {
         }
     }
     
-    async sendMessage() {
+    sendMessage() {
         const message = this.messageInput.value.trim();
-        if (!message || this.isTyping) return;
+        if (!message) return;
+        
+        // Hide smart suggestions before sending
+        this.hideSmartSuggestions();
         
         // Add user message to chat
         this.addMessage(message, 'user');
@@ -272,46 +306,50 @@ class EnhancedChatbotUI {
         this.messageInput.value = '';
         this.updateCharCount();
         
-        // Hide smart suggestions
-        this.hideSmartSuggestions();
-        
-        // Show enhanced typing indicator
+        // Show typing indicator
         this.showTypingIndicator();
         
-        try {
-            // Prepare conversation context
-            const context = this.conversationHistory.map(msg => ({
-                role: msg.type === 'user' ? 'user' : 'assistant',
-                content: msg.text
-            }));
-            
-            // Send to API
-            const response = await this.sendToAPI(message, context);
-            
-            // Hide typing indicator
+        // Send to API
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
             this.hideTypingIndicator();
             
-            // Add bot response
-            if (response.response) {
-                this.addMessage(response.response, 'bot', response);
-                
-                // Show smart suggestions if available
-                if (response.suggestions && response.suggestions.length > 0) {
-                    this.showSmartSuggestions(response.suggestions);
-                }
-            } else {
-                this.addMessage('I apologize, but I encountered an error. Please try again.', 'bot');
+            // Add AI response
+            this.addMessage(data.response, 'bot', {
+                intent: data.intent,
+                sentiment: data.sentiment,
+                entities: data.entities,
+                suggestions: data.suggestions
+            });
+            
+            // Show smart suggestions if available
+            if (data.suggestions && data.suggestions.length > 0) {
+                this.showSmartSuggestions(data.suggestions);
             }
             
-        } catch (error) {
-            console.error('Error sending message:', error);
+            // Update analytics
+            this.loadAnalytics();
+        })
+        .catch(error => {
+            console.error('Error:', error);
             this.hideTypingIndicator();
-            this.addMessage('I apologize, but I encountered a technical issue. Please try again in a moment.', 'bot');
-        }
+            this.addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+        });
     }
     
     sendQuickMessage(message) {
+        // Set the message in the input
         this.messageInput.value = message;
+        this.updateCharCount();
+        
+        // Send the message
         this.sendMessage();
     }
     
@@ -732,11 +770,197 @@ class EnhancedChatbotUI {
             .replace(/javascript:/gi, '')
             .replace(/on\w+\s*=/gi, '');
     }
+    
+    showEmojiPicker() {
+        // Create emoji picker overlay
+        const emojiPicker = document.createElement('div');
+        emojiPicker.className = 'emoji-picker-overlay';
+        emojiPicker.innerHTML = `
+            <div class="emoji-picker">
+                <div class="emoji-picker-header">
+                    <h4>Select Emoji</h4>
+                    <button class="close-emoji-btn">&times;</button>
+                </div>
+                <div class="emoji-grid">
+                    <span class="emoji" data-emoji="😊">😊</span>
+                    <span class="emoji" data-emoji="😂">😂</span>
+                    <span class="emoji" data-emoji="❤️">❤️</span>
+                    <span class="emoji" data-emoji="👍">👍</span>
+                    <span class="emoji" data-emoji="👎">👎</span>
+                    <span class="emoji" data-emoji="🎉">🎉</span>
+                    <span class="emoji" data-emoji="🔥">🔥</span>
+                    <span class="emoji" data-emoji="💯">💯</span>
+                    <span class="emoji" data-emoji="✨">✨</span>
+                    <span class="emoji" data-emoji="🙏">🙏</span>
+                    <span class="emoji" data-emoji="😎">😎</span>
+                    <span class="emoji" data-emoji="🤔">🤔</span>
+                    <span class="emoji" data-emoji="😢">😢</span>
+                    <span class="emoji" data-emoji="😡">😡</span>
+                    <span class="emoji" data-emoji="🤗">🤗</span>
+                    <span class="emoji" data-emoji="👋">👋</span>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(emojiPicker);
+        
+        // Add event listeners
+        emojiPicker.querySelector('.close-emoji-btn').addEventListener('click', () => {
+            emojiPicker.remove();
+        });
+        
+        emojiPicker.querySelectorAll('.emoji').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                const emojiText = emoji.dataset.emoji;
+                this.messageInput.value += emojiText;
+                this.messageInput.focus();
+                emojiPicker.remove();
+                this.updateCharCount();
+            });
+        });
+        
+        // Close on outside click
+        emojiPicker.addEventListener('click', (e) => {
+            if (e.target === emojiPicker) {
+                emojiPicker.remove();
+            }
+        });
+    }
+    
+    showFileUpload() {
+        // Create file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*,.pdf,.doc,.docx,.txt';
+        fileInput.multiple = false;
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFileUpload(file);
+            }
+        });
+        
+        fileInput.click();
+    }
+    
+    handleFileUpload(file) {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            this.showNotification('File size must be less than 5MB', 'error');
+            return;
+        }
+        
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+        if (!allowedTypes.includes(file.type)) {
+            this.showNotification('File type not supported. Please upload images, PDFs, Word documents, or text files.', 'error');
+            return;
+        }
+        
+        // Show file preview
+        this.showFilePreview(file);
+    }
+    
+    showFilePreview(file) {
+        const filePreview = document.createElement('div');
+        filePreview.className = 'file-preview';
+        filePreview.innerHTML = `
+            <div class="file-preview-content">
+                <div class="file-info">
+                    <i class="fas fa-file"></i>
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${this.formatFileSize(file.size)}</span>
+                </div>
+                <div class="file-actions">
+                    <button class="send-file-btn">Send File</button>
+                    <button class="remove-file-btn">Remove</button>
+                </div>
+            </div>
+        `;
+        
+        // Insert before the input wrapper
+        this.messageInput.parentElement.parentElement.insertBefore(filePreview, this.messageInput.parentElement);
+        
+        // Add event listeners
+        filePreview.querySelector('.send-file-btn').addEventListener('click', () => {
+            this.sendFileMessage(file);
+            filePreview.remove();
+        });
+        
+        filePreview.querySelector('.remove-file-btn').addEventListener('click', () => {
+            filePreview.remove();
+        });
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    sendFileMessage(file) {
+        // Create a message about the file
+        const fileMessage = `📎 Attached file: ${file.name} (${this.formatFileSize(file.size)})`;
+        
+        // Add to conversation
+        this.addMessage(fileMessage, 'user');
+        
+        // Show typing indicator
+        this.showTypingIndicator();
+        
+        // Simulate AI response about the file
+        setTimeout(() => {
+            this.hideTypingIndicator();
+            const aiResponse = `I can see you've uploaded "${file.name}". This appears to be a ${file.type.split('/')[1]} file. How can I help you with this document?`;
+            this.addMessage(aiResponse, 'bot');
+        }, 1500);
+    }
+    
+    toggleAnalyticsPanel() {
+        const analyticsPanel = document.getElementById('analyticsPanel');
+        const expandBtn = this.expandAnalyticsBtn;
+        
+        if (analyticsPanel.classList.contains('expanded')) {
+            analyticsPanel.classList.remove('expanded');
+            expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            expandBtn.setAttribute('aria-label', 'Expand analytics');
+        } else {
+            analyticsPanel.classList.add('expanded');
+            expandBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            expandBtn.setAttribute('aria-label', 'Collapse analytics');
+        }
+    }
+    
+    refreshAnalytics() {
+        // Show loading state
+        const refreshBtn = this.refreshBtn;
+        const originalContent = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        refreshBtn.disabled = true;
+        
+        // Reload analytics
+        this.loadAnalytics().then(() => {
+            // Restore button state
+            refreshBtn.innerHTML = originalContent;
+            refreshBtn.disabled = false;
+            
+            // Show success notification
+            this.showNotification('Analytics refreshed successfully!', 'success');
+        }).catch(() => {
+            // Restore button state on error
+            refreshBtn.innerHTML = originalContent;
+            refreshBtn.disabled = false;
+            this.showNotification('Failed to refresh analytics', 'error');
+        });
+    }
 }
 
-// Initialize chatbot when DOM is loaded
+// Initialize the chatbot when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    window.chatbot = new EnhancedChatbotUI();
+    window.chatbotUI = new EnhancedChatbotUI();
     
     // Add enhanced CSS for notifications and entities
     const style = document.createElement('style');
@@ -776,99 +1000,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 });
 
-// Global functions for HTML onclick handlers
+// Global functions for HTML onclick attributes (legacy support)
 function sendMessage() {
-    if (window.chatbot) {
-        window.chatbot.sendMessage();
-    }
-}
-
-function sendQuickMessage(message) {
-    if (window.chatbot) {
-        window.chatbot.sendQuickMessage(message);
-    }
-}
-
-function refreshAnalytics() {
-    if (window.chatbot) {
-        window.chatbot.refreshAnalytics();
+    if (window.chatbotUI) {
+        window.chatbotUI.sendMessage();
     }
 }
 
 function openSettings() {
-    if (window.chatbot) {
-        window.chatbot.openSettings();
+    if (window.chatbotUI) {
+        window.chatbotUI.openSettings();
     }
 }
 
 function closeSettings() {
-    if (window.chatbot) {
-        window.chatbot.closeSettings();
+    if (window.chatbotUI) {
+        window.chatbotUI.closeSettings();
     }
 }
 
-// Handle page visibility changes for better performance
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        // Page is hidden, pause some operations
-        if (window.chatbot) {
-            window.chatbot.pauseAutoRefresh = true;
-        }
-    } else {
-        // Page is visible, resume operations
-        if (window.chatbot) {
-            window.chatbot.pauseAutoRefresh = false;
-            window.chatbot.loadAnalytics();
-        }
-    }
-});
-
-// Handle offline/online status
-window.addEventListener('online', () => {
-    if (window.chatbot) {
-        window.chatbot.showNotification('Connection restored!', 'success');
-    }
-});
-
-window.addEventListener('offline', () => {
-    if (window.chatbot) {
-        window.chatbot.showNotification('Connection lost. Please check your internet connection.', 'error');
-    }
-});
-
-// Service Worker registration for PWA capabilities
+// Service Worker Registration for PWA capabilities
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
+            .then((registration) => {
                 console.log('SW registered: ', registration);
             })
-            .catch(registrationError => {
+            .catch((registrationError) => {
                 console.log('SW registration failed: ', registrationError);
             });
     });
 }
 
-// Handle beforeinstallprompt for PWA
+// Handle beforeinstallprompt event for PWA installation
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    
-    // Show install prompt if desired
-    if (window.chatbot) {
-        window.chatbot.showNotification('Install this app for a better experience!', 'info');
-    }
+    console.log('PWA install prompt available');
 });
 
 // Performance monitoring
-if ('performance' in window) {
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const perfData = performance.getEntriesByType('navigation')[0];
-            if (perfData) {
-                console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
-            }
-        }, 0);
-    });
-}
+window.addEventListener('load', () => {
+    if ('performance' in window) {
+        const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+        console.log(`Page load time: ${loadTime}ms`);
+    }
+});
