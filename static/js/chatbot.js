@@ -318,13 +318,19 @@ class EnhancedChatbotUI {
         // Show typing indicator
         this.showTypingIndicator();
         
+        // Prepare conversation context for the API
+        const context = this.prepareConversationContext();
+        
         // Send to API
         fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ 
+                message: message,
+                context: context
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -379,6 +385,27 @@ class EnhancedChatbotUI {
         }
         
         return await response.json();
+    }
+    
+    prepareConversationContext() {
+        // Convert conversation history to API context format
+        const context = [];
+        const messages = this.messagesContainer.querySelectorAll('.message');
+        
+        // Get last 10 messages for context (to avoid too much context)
+        const recentMessages = Array.from(messages).slice(-10);
+        
+        for (const messageEl of recentMessages) {
+            const isUser = messageEl.classList.contains('user-message');
+            const text = messageEl.querySelector('.message-text').textContent;
+            
+            context.push({
+                role: isUser ? 'user' : 'assistant',
+                content: text
+            });
+        }
+        
+        return context;
     }
     
     addMessage(text, type, metadata = {}) {

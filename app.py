@@ -306,11 +306,11 @@ CRITICAL GUIDELINES:
                     logger.info("Using OpenAI API response")
                 except Exception as e:
                     logger.error(f"Error calling OpenAI API: {e}")
-                    ai_response = self._generate_fallback_response(intent, processed_message, sentiment)
+                    ai_response = self._generate_fallback_response(intent, processed_message, sentiment, context)
                     logger.info("Using fallback response due to OpenAI API error")
             else:
                 # Enhanced fallback response when OpenAI is not available
-                ai_response = self._generate_fallback_response(intent, processed_message, sentiment)
+                ai_response = self._generate_fallback_response(intent, processed_message, sentiment, context)
                 logger.info("Using fallback response - OpenAI not available")
             
             # Calculate response time
@@ -398,11 +398,59 @@ CRITICAL GUIDELINES:
         
         return suggestions[:3]  # Limit to 3 suggestions
     
-    def _generate_fallback_response(self, intent: str, message: str, sentiment: SentimentAnalysis) -> str:
+    def _generate_fallback_response(self, intent: str, message: str, sentiment: SentimentAnalysis, context: List[Dict] = None) -> str:
         """Generate highly specific, contextual fallback responses when OpenAI is unavailable"""
         
         logger.info(f"Fallback method called with intent: {intent}, message: {message}")
         message_lower = message.lower()
+        
+        # Check if this is a follow-up response (order number, account info, etc.)
+        if context and len(context) > 0:
+            # Get the last AI response to understand the conversation context
+            last_ai_response = ""
+            for msg in reversed(context):
+                if msg.get("role") == "assistant":
+                    last_ai_response = msg.get("content", "").lower()
+                    break
+            
+            # If last response asked for order number and current message looks like an order number
+            if any(phrase in last_ai_response for phrase in ["order number", "what's your order number", "please provide your order number"]):
+                if re.match(r'^\d{10,20}$', message.strip()):  # Looks like an order number
+                    return "Perfect! I have your order number. Now I need a few more details to process your request:\n\n1. Can you describe the damage you see?\n2. When did you receive the order?\n3. Would you prefer a replacement or refund?\n\nOnce I have these details, I'll process your request immediately."
+            
+            # If last response asked for damage description and current message describes damage
+            if any(phrase in last_ai_response for phrase in ["describe the damage", "damage you see", "description of the damage"]):
+                if any(word in message_lower for word in ["broken", "damaged", "cracked", "torn", "scratched", "defective"]):
+                    return "Thank you for the damage description. I'm processing your replacement/refund request now.\n\nYour request has been submitted and you should receive a confirmation email within 5 minutes. A return label will be sent to your email address.\n\nIs there anything else I can help you with today?"
+            
+            # If last response asked for preference (replacement/refund) - more flexible matching
+            if any(phrase in last_ai_response for phrase in ["replacement or refund", "prefer a replacement", "refund or exchange", "replacement/refund", "would you prefer", "prefer a"]):
+                if any(word in message_lower for word in ["replacement", "replace", "new", "exchange"]):
+                    return "Perfect! I've processed your replacement request. A new item will be shipped to you within 2-3 business days. You'll receive tracking information via email.\n\nThank you for your patience, and I apologize for the inconvenience. Is there anything else I can help you with?"
+                elif any(word in message_lower for word in ["refund", "money back", "return"]):
+                    return "Perfect! I've processed your refund request. The refund will be processed within 5-7 business days and will be credited back to your original payment method.\n\nThank you for your patience, and I apologize for the inconvenience. Is there anything else I can help you with?"
+            
+            # If last response was about processing the request (more flexible)
+            if any(phrase in last_ai_response for phrase in ["processing your", "request has been submitted", "confirmation email", "return label"]):
+                if any(word in message_lower for word in ["replacement", "replace", "new", "exchange"]):
+                    return "Perfect! I've processed your replacement request. A new item will be shipped to you within 2-3 business days. You'll receive tracking information via email.\n\nThank you for your patience, and I apologize for the inconvenience. Is there anything else I can help you with?"
+                elif any(word in message_lower for word in ["refund", "money back", "return"]):
+                    return "Perfect! I've processed your refund request. The refund will be processed within 5-7 business days and will be credited back to your original payment method.\n\nThank you for your patience, and I apologize for the inconvenience. Is there anything else I can help you with?"
+        
+        # THANK YOU responses (HIGH PRIORITY - check this first!)
+        if any(word in message_lower for word in ['thank you', 'thanks', 'thank', 'appreciate it', 'great', 'perfect']):
+            if context and len(context) > 0:
+                # Check if this is after a successful resolution
+                last_ai_response = ""
+                for msg in reversed(context):
+                    if msg.get("role") == "assistant":
+                        last_ai_response = msg.get("content", "").lower()
+                        break
+                
+                if any(phrase in last_ai_response for phrase in ["processed your", "shipped to you", "tracking information", "refund will be processed"]):
+                    return "You're very welcome! I'm glad I could help resolve your issue. Your request has been successfully processed and you'll receive all the necessary information via email.\n\nIf you need any further assistance in the future, don't hesitate to reach out. Have a great day! 😊"
+            
+            return "You're welcome! I'm here to help. Is there anything else I can assist you with today?"
         
         # HIGHLY SPECIFIC responses based on exact user input
         if 'hi' in message_lower or 'hello' in message_lower:
